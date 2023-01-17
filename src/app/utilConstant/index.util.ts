@@ -1,5 +1,5 @@
 export enum Util {
-    Api = 'https://rms.jlsipos.com/',
+    Api = 'https://rms.jlsipos.com/api/v1/',
     ApiSecond = 'https://rmstest.jlsipos.com/',
 }
 export enum ApiPath {
