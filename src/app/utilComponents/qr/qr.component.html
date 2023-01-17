@@ -1,0 +1,10 @@
+<div *ngIf="display" class="qr-layout">
+    <div class="qr-content-layout">
+        <div class="qr-content" @animate>
+            <button pButton pRipple type="button" icon="pi pi-times"
+                class="p-button-rounded p-button-danger p-button-text" style="position: 'absolute'; top: 0; right: 0"
+                (click)="close()" appOutClick (keyOutClick)="close()"></button>
+            <img [src]="data.qrCode" alt="">
+        </div>
+    </div>
+</div>

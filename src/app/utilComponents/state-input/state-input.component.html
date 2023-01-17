@@ -1,0 +1,20 @@
+<ng-container *ngIf="boxControl; then boxState else msgState">
+
+</ng-container>
+
+<ng-template #msgState>
+    <div *ngIf="control.errors?.[errControl]">{{errMessage}}</div> 
+</ng-template>
+
+<ng-template #boxState>
+<span *ngIf="(control.invalid && (control.untouched || control.touched) && control.pristine) || (control.pristine && control.valid)"
+    style="position: absolute; background-color: rgb(28, 115, 228);right: 0; width: 0.5em; z-index: 500; height: 100%;">
+</span>
+<span *ngIf="control.invalid && (control.untouched || control.touched) && control.dirty"
+    style="position: absolute; background-color: #f44336;right: 0; width: 0.5em; z-index: 500; height: 100%;">
+</span>
+<span *ngIf="control.valid && (control.untouched || control.touched) && control.dirty"
+    style="position: absolute; background-color: green;right: 0; width: 0.5em; z-index: 500; height: 100%;">
+</span>
+</ng-template>
+

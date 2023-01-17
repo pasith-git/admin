@@ -1,0 +1,68 @@
+<ng-container *ngIf="modalDefault; then modalCreate; else modalUpdate">
+
+</ng-container>
+
+<ng-template #modalCreate>
+    <p-dialog [(visible)]="modalDisplay" [style]="{width: '100vw', height: '100vh'}" [draggable]="false"
+        (onHide)="onHide(false)" [showHeader]="false" [dismissableMask]="true" [modal]="true">
+        <ng-template pTemplate="body">
+            <div class="row" style="height: 100%;">
+                <div class="col-12 col-md-2 col-sm-6 p-0">
+                    <div class="content-left-layout"
+                        style="height: 100%; background-color: rgb(218,218,218); display: flex; justify-content: center; align-items: center;">
+                        <div class="content-left-content" style="text-align: center;">
+                            <fa-icon [icon]="clIcon" style="font-size: 10rem; color: black;" *ngIf="clIcon"></fa-icon>
+                            <img [src]="imagePath" style="width: 60%; height: 60%;" *ngIf="imagePath" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-10 col-sm-6 p-0">
+                    <div
+                        style="display: flex; justify-content: space-between; padding: 1em; background-color: rgb(246, 246, 246); align-items: center;">
+                        <div style="font-size: 1.8em; font-weight: bold;">
+                            ເພີ່ມ{{clText}}
+                        </div>
+                        <button pButton pRipple type="button" icon="pi pi-times"
+                            class="p-button-rounded p-button-secondary p-button-text" (click)="onClose(false)"></button>
+                    </div>
+                    <ng-container *ngTemplateOutlet="body">
+                    </ng-container>
+                </div>
+            </div>
+
+
+        </ng-template>
+    </p-dialog>
+</ng-template>
+
+<ng-template #modalUpdate>
+    <p-dialog [(visible)]="modalEditDisplay" [style]="{width: '100vw', height: '100vh'}" [draggable]="false"
+        (onHide)="onHide(false)" [showHeader]="false" [dismissableMask]="true" [modal]="true">
+        <ng-template pTemplate="body">
+            <div class="row" style="height: 100%;">
+                <div class="col-12 col-md-2 col-sm-6 p-0">
+                    <div class="content-left-layout"
+                        style="height: 100%; background-color: rgb(218,218,218); display: flex; justify-content: center; align-items: center;">
+                        <div class="content-left-content" style="text-align: center;">
+                            <fa-icon [icon]="clIcon" style="font-size: 10rem; color: black;" *ngIf="clIcon"></fa-icon>
+                            <img [src]="imagePath" style="width: 60%; height: 60%;" *ngIf="imagePath" />
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-10 col-sm-6 p-0">
+                    <div
+                        style="display: flex; justify-content: space-between; padding: 1em; background-color: rgb(246, 246, 246); align-items: center;">
+                        <div style="font-size: 1.8em; font-weight: bold;">
+                            ແກ້ໄຂ{{clText}}
+                        </div>
+                        <button pButton pRipple type="button" icon="pi pi-times"
+                            class="p-button-rounded p-button-secondary p-button-text" (click)="onClose(false)"></button>
+                    </div>
+                    <ng-container *ngTemplateOutlet="body">
+                    </ng-container>
+                </div>
+            </div>
+        </ng-template>
+    </p-dialog>
+</ng-template>

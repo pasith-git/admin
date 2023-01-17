@@ -1,0 +1,154 @@
+<div class="col-12 col-md-12 col-sm-6 p-0 crud-header"
+    style="box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; height: 50px; margin-bottom: 0.5em;">
+    <div style="display: flex; align-items: center; padding: 0 5px; height: 100%;">
+        <div *ngxPermissionsOnly="['RESTAURANTADMIN','BRANCHMANAGER']; else elseBlock; then thenBlock">main</div>
+        <ng-template #elseBlock>
+            <button pButton type="button" label="ເພີ່ມຂໍ້ມູນ" icon="pi pi-plus" (click)="permissionFailedAlert()"
+                [disabled]="disabled"></button>
+        </ng-template>
+        <ng-template #thenBlock>
+            <button pButton type="button" label="ເພີ່ມຂໍ້ມູນ" icon="pi pi-plus" (click)="showDialog(true)"
+                [disabled]="disabled"></button>
+        </ng-template>
+
+    </div>
+</div>
+<p-table [value]="data$ | async" [columns]="col" #dt [rows]="10" [rowsPerPageOptions]="[10,25,50,{ showAll: 'All' }]"
+    [paginator]="true" dataKey="id" id="pdata-table" styleClass="p-datatable-gridlines">
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th *ngIf="extraColCheck" rowspan="2" style="width: 4rem; text-align: center;"> <i class="pi pi-plus-circle"
+                    style="font-size: 1.5em;"></i></th>
+            <th rowspan="2" style="text-align: center; width: 4rem; font-size: 100%;">ລຳດັບ</th>
+            <ng-container *ngFor="let col of columns">
+                <th [pSortableColumn]="col.field" style="text-align: center; min-width: 10%;">{{col.header}}
+                    <p-sortIcon [field]="col.field">
+                    </p-sortIcon>
+                </th>
+            </ng-container>
+            <th rowspan="2" style="text-align: center; width: 4rem;"><i class="pi pi-cog" style="font-size: 1.5em;"></i>
+            </th>
+        </tr>
+        <tr>
+            <ng-container *ngFor="let col of columns">
+                <th style="text-align: center;">
+                    <input pInputText type="text" class="p-column-filter" style="width: 75%"
+                        (input)="dt.filter($event.target.value, col.field, 'contains')" [value]="dt.filters[co]?.value">
+                </th>
+            </ng-container>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-data let-columns="columns" let-expanded="expanded" let-index="rowIndex">
+        <tr class="tr-selection">
+            <td *ngIf="extraColCheck" style="text-align: center; width: 3%; padding: 10px 5px;">
+                <button type="button" pButton pRipple [pRowToggler]="data"
+                    class="p-button-text p-button-rounded p-button-plain"
+                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" style="width: 100%;"></button>
+            </td>
+
+            <td style="text-align: center">{{index + 1}}</td>
+            <ng-container *ngFor="let col of columns">
+                <ng-container *ngIf="col.field === 'price' || col.field === 'amount'">
+                    <td>{{data[col.field] | number}}</td>
+                </ng-container>
+                <ng-container *ngIf="col.field === 'createdAt' || col.field === 'updatedAt'">
+                    <td style="text-align: center;">{{data[col.field]}}</td>
+                </ng-container>
+                <ng-container *ngIf="col.field === 'image'">
+                    <td style="text-align: center;"><button style="background-color: transparent;"
+                            (click)="resizeFullPic(data[col.field])">
+                            <img src="https://rmstest.jlsipos.com/images/{{data[col.field]}}"
+                                style="width: 100px; height: 100px;" [title]="data[col.field]" />
+                        </button></td>
+                </ng-container>
+                <ng-container *ngIf="col.field === 'percentAmount'">
+                    <td>{{data[col.field]}} %</td>
+                </ng-container>
+                <ng-container *ngIf="col.field === 'dateExit'">
+                    <td>{{data[col.field] | date: 'yyyy-MM-dd'}}</td>
+                </ng-container>
+                <ng-container
+                    *ngIf="col.field !== 'createdAt' && col.field !== 'updatedAt' && (col.field !== 'price' && col.field !== 'amount') && col.field !== 'image' && col.field !== 'percentAmount' && col.field !== 'dateExit'">
+                    <td>{{data[col.field]}}</td>
+                </ng-container>
+            </ng-container>
+            <td style="text-align: center;">
+                <div *ngxPermissionsOnly="['RESTAURANTADMIN','BRANCHMANAGER']; else elseBlock; then thenBlock">main
+                </div>
+                <ng-template #elseBlock>
+                    <dp-button [dpIndex]="data.id" (toggle)="toggleDp($event)"
+                        (dpEdit)="permissionFailedAlert(data.id, index)" (dpRemove)="permissionFailedAlert(data.id)"
+                        #singleDp [dpId]="data.id">
+                    </dp-button>
+                </ng-template>
+                <ng-template #thenBlock>
+                    <dp-button [dpIndex]="data.id" (toggle)="toggleDp($event)" (dpEdit)="dpEditEvent(data.id, index)"
+                        (dpRemove)="dpRemoveEvent(data.id)" #singleDp [dpId]="data.id">
+                    </dp-button>
+                </ng-template>
+
+            </td>
+        </tr>
+    </ng-template>
+    <ng-container *ngIf="extraColCheck">
+        <ng-template pTemplate="rowexpansion" let-data>
+
+            <tr>
+                <td [colSpan]="5">
+                    <div class="p-3">
+                        <p-table [value]="data[extraColKey]" dataKey="id" id="pdata-table" [resizableColumns]="true">
+                            <ng-template pTemplate="header" let-extraData>
+            <tr>
+                <th style="text-align: center; width: 1%">ລຳດັບ</th>
+                <th *ngFor="let col of extraCol" style="width: 10%;">
+                    {{col.header}}
+                </th>
+            </tr>
+            <ng-container *ngIf="data[extraColKey].length === 0">
+                <tr>
+                    <td style="text-align: center; padding: 10px; background-color: rgb(246, 246, 246); font-size: 1.3rem; font-weight: bold;"
+                        [colSpan]="5">ບໍ່ມີວັດຖຸດິບ</td>
+                </tr>
+            </ng-container>
+        </ng-template>
+        <ng-container *ngIf="data[extraColKey].length > 0">
+            <ng-template pTemplate="body" let-extraData #od let-index="rowIndex">
+                <tr>
+                    <td style="text-align: center;">{{index + 1}}</td>
+                    <ng-container *ngFor="let col of extraCol">
+                        <td *ngIf="col.field === 'gender'">
+                            {{extraData[col.field] === 'f' ? 'ຍິງ': 'ຊາຍ'}}
+                        </td>
+                        <td *ngIf="col.field !== 'gender'">
+                            {{extraData[col.field]}}
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-template>
+        </ng-container>
+
+
+</p-table>
+</div>
+</td>
+</tr>
+</ng-template>
+</ng-container>
+
+<!--   <ng-template pTemplate="footer">
+        <tr>
+            <td>ສະຫຼຸບ</td>
+            <td>{{totalQ}}</td>
+            <td>{{totalT | number}}</td>
+        </tr>
+    </ng-template> -->
+<ng-template pTemplate="paginatorleft">
+
+</ng-template>
+<ng-template pTemplate="paginatorleft" let-state>
+    <div style="font-weight: bold;">
+        ສະແດງ {{(state.page * state.rows) + 1}} - {{state.rows * (state.page + 1)}} ຈາກທັງໝົດ {{state.totalRecords}}
+        ລາຍການ
+    </div>
+</ng-template>
+</p-table>

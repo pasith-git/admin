@@ -1,0 +1,11 @@
+:host ::ng-deep .p-dialog-header {
+    background-color: rgb(246, 246, 246);
+}
+
+:host ::ng-deep .p-dialog-content {
+    padding: 0;
+}
+
+button {
+    border-radius: 0;
+}

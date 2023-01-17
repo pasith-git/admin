@@ -1,0 +1,23 @@
+<div class="row p-1">
+  <ng-container *ngFor="let data of data; let i = index">
+    <ng-container [ngTemplateOutlet]="tableBox" [ngTemplateOutletContext]="{$implicit: data,index:i}"></ng-container>
+  </ng-container>
+</div>
+<ng-template #tableBox let-data let-i="index">
+  <div class="col-12 col-md-2 col-sm-4" style="padding: 0 5px; margin: 5px 0;">
+    <div class="table-box">
+      <div class="table-box-body">
+        <ng-container *ngIf="data.vatOption === 'customer'">
+          <div class="ak">ອາກອນລູກຄ້າຈ່າຍ</div> 
+        </ng-container>
+        <ng-container *ngIf="data.vatOption === 'restaurant'">
+          <div class="ak">ອາກອນຮ້ານຈ່າຍ</div> 
+        </ng-container>
+        <div class="text" style="height: 100%; display: flex; justify-content: center; align-items: center;"><span style="font-weight: bold; font-size: 2.2em;">{{data.tableName}}</span></div>
+      </div>
+      <div class="footer">
+        <button style="font-size: 1.1em;" [routerLink]="['/checkout', bchParam, data.tableId]">ເລືອກ</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

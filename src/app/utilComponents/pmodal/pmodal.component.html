@@ -1,0 +1,307 @@
+<p-dialog [(visible)]="visible" [draggable]="false" [style]="{width: '35vw'}" [resizable]="false" [modal]="true"
+    (onHide)="modalHide()" [dismissableMask]="true">
+    <ng-template pTemplate="header">
+        <div style="font-weight: bold; font-size: 1.3em;">{{pmodalData.header}}</div>
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="pmodal-content">
+            <div class="payment-selector">
+                <div class="payment-content">
+                    <button (click)="selectedDebit()" [ngClass]="selectDebit ? 'selectedDebit-style' : null">
+                        <fa-icon [icon]="faCreditCard"></fa-icon>
+                    </button>
+                    <div style="text-align: center;">ບັດເຄດິດ</div>
+                </div>
+                <div class="payment-content">
+                    <button (click)="selectedMoney()" [ngClass]="selectMoney ? 'selectedMoney-style' : null">
+                        <fa-icon [icon]="faMoneyBill"></fa-icon>
+                    </button>
+                    <div style="text-align: center;">ເງິນສົດ</div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="select">
+            <ng-container *ngIf="selectMoney">
+                <hr>
+                <div style="text-align: center; position: relative;">
+                    <div
+                        style="position: absolute; top: 0; right: 0; padding: 0.5rem; display: flex; flex-direction: column; background-color: white;">
+                        <button style="padding: 0.5rem;" (click)="calModal()" (keydown.enter)="$event.preventDefault()">
+                            <fa-icon [icon]="faCalculator" size="2x"></fa-icon>
+                        </button>
+                        <button style="padding: 0.5rem;" (click)="resetForm()">
+                            <i class="pi pi-refresh" style="color: red;"></i>
+                        </button>
+                    </div>
+                    <form [formGroup]="form">
+                        <div style="text-align: center; margin: 5px auto 0 auto; width: 74.5%;">
+                            <p-inputNumber type="number" pInputText placeholder="ຮັບເງິນ" formControlName="money"
+                                class="inputNumber" [style]="{'width':'100%'}" (onInput)="getMoneyR($event)"
+                                [ngClass]="{'input-valid': moneyInput.dirty && moneyInput.invalid && (moneyInput.touched || moneyInput.untouched)}"
+                                recInput (status)="moneyBlur()">
+                            </p-inputNumber>
+                        </div>
+                        <ng-container *ngIf="pmodalData.statusSep === 'sepNormal'">
+                            <div style="text-align: center; margin: 5px auto 0 auto; width: 74.5%;">
+                                <p-inputNumber type="number" pInputText placeholder="ຈຳນວນເງິນທີ່ຕ້ອງຈ່າຍ"
+                                    formControlName="npMoney" class="inputNumber" [style]="{'width':'100%'}"
+                                    (onInput)="getMoneyRnp($event)"
+                                    [ngClass]="{'input-valid': npMoney.dirty && npMoney.invalid && (npMoney.touched || npMoney.untouched)}"
+                                    recInput (status)="npMoneyBlur()">
+                                </p-inputNumber>
+                            </div>
+                        </ng-container>
+                        <div style="display: flex; justify-content: center; margin-top: 5px;">
+                            <div class="coupon-selector">
+                                <p-radioButton name="discount" value="discountMoney" formControlName="discount"
+                                    label="ສ່ວນຫຼຸດເປັນເງິນ"></p-radioButton>
+                                <p-radioButton name="discount" value="discountPercent" formControlName="discount"
+                                    label="ສ່ວນຫຼຸດເປັນເປີເຊັນ">
+                                </p-radioButton>
+                                <p-radioButton name="discount" value="discountMember" formControlName="discount"
+                                    label="ສ່ວນຫຼຸດເປັນເບີໂທ">
+                                </p-radioButton>
+                                <p-radioButton name="discount" value="discountCode" formControlName="discount"
+                                    label="ສ່ວນຫຼຸດເປັນລະຫັດ">
+                                </p-radioButton>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: center; margin-top: 5px;">
+                            <div style="text-align: center; width: 50%">
+                                <input type="text" pInputText formControlName="coupon" style="width: 100%;"
+                                    placeholder="ປ້ອນສ່ວນຫຼຸດ">
+                            </div>
+                            <button class="ap-code" (click)="findCoupon()" type="button">apply code</button>
+                        </div>
+                    </form>
+                    <div class="money-change" style="margin-top: 5px;">
+                        <div stle="display: flex; align-items: center;">ສ່ວນຫຼຸດ <span style="font-weight: bold;"
+                                *ngIf="(checkoutData | async).couponPercent">({{(checkoutData | async).couponPercent}}
+                                %)</span></div>
+                        <div style="font-size: 1.2em; font-weight: bold;">{{(checkoutData | async).moneyCoupon |
+                            number}} ₭</div>
+                    </div>
+                    <div class="money-change" style="margin-top: 5px;">
+                        <div stle="display: flex; align-items: center;">ຈຳນວນເງິນທີ່ຕ້ອງຈ່າຍ</div>
+                        <div style="font-size: 1.2em; font-weight: bold;">{{(checkoutData | async).total | number}} ₭
+                        </div>
+                    </div>
+                    <ng-container *ngIf="(checkoutData | async).moneyReceive > (checkoutData | async).total">
+                        <div class="money-change" style="margin-top: 5px;">
+                            <div style="display: flex; align-items: center;">ເງິນທອນ <span
+                                    style="font-weight: bold; color: green;"
+                                    *ngIf="(checkoutData | async).moneyCoupon">(+{{(checkoutData | async).moneyCoupon |
+                                    number}})</span></div>
+                            <div style="font-size: 1.2em; font-weight: bold; color: green;">
+
+                                + {{(checkoutData | async).moneyChange | number}} ₭
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container
+                        *ngIf="(checkoutData | async).moneyReceive < (checkoutData | async).total && (checkoutData | async).moneyChange !== 0">
+                        <div class="money-change" style="margin-top: 5px;">
+                            <div style="display: flex; align-items: center;">ເງິນທອນ <span
+                                    style="font-weight: bold; color: green;"
+                                    *ngIf="(checkoutData | async).moneyCoupon">(+{{(checkoutData | async).moneyCoupon |
+                                    number}})</span></div>
+                            <div style="font-size: 1.2em; font-weight: bold; color: red;">- {{(checkoutData |
+                                async).moneyChange | number}} ₭
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container
+                        *ngIf="(checkoutData | async).moneyReceive + (checkoutData | async).moneyCoupon === (checkoutData | async).total || (checkoutData | async).moneyChange === 0">
+                        <div class="money-change" style="margin-top: 5px;">
+                            <div style="display: flex; align-items: center;">ເງິນທອນ <span
+                                    style="font-weight: bold; color: green;"
+                                    *ngIf="(checkoutData | async).moneyCoupon">(+{{(checkoutData | async).moneyCoupon |
+                                    number }})</span></div>
+                            <div style="font-size: 1.2em; font-weight: bold;">{{(checkoutData | async).moneyChange |
+                                number}} ₭</div>
+                        </div>
+                    </ng-container>
+                    <div class="row" style="margin: 10px auto 0 auto !important; width: 75% !important;">
+                        <div class="col-12 col-md-4 col-sm-6" *ngFor="let mp of moneyOptions" style="padding: 0;">
+                            <button class="mp-btn" (click)="moneyPicker(mp.amount)">
+                                {{mp.amount | number}} ₭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <ng-container *ngIf="pmodalData.type === 'normal'">
+                    <div *ngIf="select" style="margin-top: 1em;">
+                        <button type="button" pButton label="ຢຶນຢັນ" style="width: 100%; border-radius: 0;"
+                            class="p-button-info" (click)="payByCash()"></button>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="pmodalData.type === 'sep'">
+                    <div *ngIf="select" style="margin-top: 1em;">
+                        <div
+                            *ngIf="checkoutService.data.moneyReceive + checkoutService.data.moneyCoupon >= checkoutService.data.total && checkoutService.data.moneyReceive && (npMoney?.value || pmodalData.statusSep === 'sepOrder') ; then truePrint else falsePrint">
+                        </div>
+                        <ng-template #truePrint>
+                            <button type="button" pButton label="ພິມບິນຊຳລະເງິນ" style="width: 100%; border-radius: 0;"
+                                class="p-button-success mb-2" (click)="sepPrint()" ngxPrint [useExistingCss]="true"
+                                printSectionId="bill-payment-print" (click)="sepPrint()"></button>
+                        </ng-template>
+                        <ng-template #falsePrint>
+                            <button type="button" pButton label="ພິມບິນຊຳລະເງິນ" style="width: 100%; border-radius: 0;"
+                                class="p-button-success mb-2" (click)="sepPrintF()"></button>
+                        </ng-template>
+                        <button type="button" pButton label="ຢຶນຢັນ" style="width: 100%; border-radius: 0;"
+                            class="p-button-info" (click)="payByCash()"></button>
+                    </div>
+                </ng-container>
+
+            </ng-container>
+            <ng-container *ngIf="selectDebit">
+                <hr>
+                <div style="text-align: center; position: relative;">
+                    <div
+                        style="position: absolute; top: 0; right: 0; padding: 0.5rem; display: flex; flex-direction: column; background-color: white;">
+                        <button style="padding: 0.5rem;" (click)="calModal()" (keydown.enter)="$event.preventDefault()">
+                            <fa-icon [icon]="faCalculator" size="2x"></fa-icon>
+                        </button>
+                        <button style="padding: 0.5rem;" (click)="resetForm()">
+                            <i class="pi pi-refresh" style="color: red;"></i>
+                        </button>
+                    </div>
+                    <form [formGroup]="form">
+                        <div style="text-align: center; margin: 5px auto 0 auto; width: 74.5%;">
+                            <p-inputNumber type="number" pInputText placeholder="ຮັບເງິນ" formControlName="money"
+                                class="inputNumber" [style]="{'width':'100%'}" (onInput)="getMoneyR($event)" recInput
+                                (status)="moneyBlur()"
+                                [ngClass]="{'input-valid': moneyInput.dirty && moneyInput.invalid && (moneyInput.touched || moneyInput.untouched)}">
+                            </p-inputNumber>
+                        </div>
+                        <ng-container *ngIf="pmodalData.statusSep === 'sepNormal'">
+                            <div style="text-align: center; margin: 5px auto 0 auto; width: 74.5%;">
+                                <p-inputNumber type="number" pInputText placeholder="ຈຳນວນເງິນທີ່ຕ້ອງຈ່າຍ"
+                                    formControlName="npMoney" class="inputNumber" [style]="{'width':'100%'}"
+                                    (onInput)="getMoneyRnp($event)"
+                                    [ngClass]="{'input-valid': npMoney.dirty && npMoney.invalid && (npMoney.touched || npMoney.untouched)}"
+                                    recInput (status)="npMoneyBlur()">
+                                </p-inputNumber>
+                            </div>
+                        </ng-container>
+                        <div style="display: flex; justify-content: center; margin-top: 5px;">
+                            <div class="coupon-selector">
+                                <p-radioButton name="discount" value="discountMoney" formControlName="discount"
+                                    label="ສ່ວນຫຼຸດເປັນເງິນ"></p-radioButton>
+                                <p-radioButton name="discount" value="discountPercent" formControlName="discount"
+                                    label="ສ່ວນຫຼຸດເປັນເປີເຊັນ">
+                                </p-radioButton>
+                                <p-radioButton name="discount" value="discountMember" formControlName="discount"
+                                    label="ສ່ວນຫຼຸດເປັນເບີໂທ">
+                                </p-radioButton>
+                                <p-radioButton name="discount" value="discountCode" formControlName="discount"
+                                    label="ສ່ວນຫຼຸດເປັນລະຫັດ">
+                                </p-radioButton>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: center; margin-top: 5px;">
+                            <div style="text-align: center; width: 50%">
+                                <input type="text" pInputText formControlName="coupon" style="width: 100%;"
+                                    placeholder="ປ້ອນສ່ວນຫຼຸດ">
+                            </div>
+                            <button class="ap-code" (click)="findCoupon()" type="button">apply code</button>
+                        </div>
+                        <div style="display: flex; width: 100%; justify-content: center; margin: auto;">
+                            <div style="text-align: center; margin: 5px 0 0 0; width: 37%; margin-left: 0.5%;">
+                                <p-inputNumber type="number" pInputText placeholder="ເລກອ້າງອີງ" class="inputNumber"
+                                    [style]="{'width':'100%'}" [useGrouping]="false" formControlName="bankRef"
+                                    [inputStyleClass]="(bankRef.dirty && bankRef.invalid && (bankRef.touched || bankRef.untouched)) ? 'p-invalid': null">
+                                </p-inputNumber>
+                            </div>
+                            <div style="text-align: center; margin: 5px 0 0 0; width: 37%; margin-left: 0.5%;">
+                                <p-dropdown [options]="bankOptions" optionLabel="name.value" optionValue="name"
+                                    [(ngModel)]="bankNameInput" [ngModelOptions]="{standalone: true}"
+                                    [placeholder]="bankOptions?.length < 1 ? 'loading' : false">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="money-change" style="margin-top: 5px;">
+                        <div stle="display: flex; align-items: center;">ສ່ວນຫຼຸດ <span style="font-weight: bold;"
+                                *ngIf="(checkoutData | async).couponPercent">({{(checkoutData | async).couponPercent}}
+                                %)</span></div>
+                        <div style="font-size: 1.2em; font-weight: bold;">{{(checkoutData | async).moneyCoupon |
+                            number}} ₭</div>
+                    </div>
+                    <div class="money-change" style="margin-top: 5px;">
+                        <div stle="display: flex; align-items: center;">ຈຳນວນເງິນທີ່ຕ້ອງຈ່າຍ</div>
+                        <div style="font-size: 1.2em; font-weight: bold;">{{(checkoutData | async).total | number}} ₭
+                        </div>
+                    </div>
+                    <ng-container *ngIf="(checkoutData | async).moneyReceive  > (checkoutData | async).total">
+                        <div class="money-change" style="margin-top: 5px;">
+                            <div style="display: flex; align-items: center;">ເງິນທອນ <span
+                                    style="font-weight: bold; color: green;"
+                                    *ngIf="(checkoutData | async).moneyCoupon">(+{{(checkoutData | async).moneyCoupon |
+                                    number}})</span></div>
+                            <div style="font-size: 1.2em; font-weight: bold; color: green;">
+
+                                + {{(checkoutData | async).moneyChange | number}} ₭
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container
+                        *ngIf="(checkoutData | async).moneyReceive < (checkoutData | async).total && (checkoutData | async).moneyChange !== 0">
+                        <div class="money-change" style="margin-top: 5px;">
+                            <div style="display: flex; align-items: center;">ເງິນທອນ <span
+                                    style="font-weight: bold; color: green;"
+                                    *ngIf="(checkoutData | async).moneyCoupon">(+{{(checkoutData | async).moneyCoupon |
+                                    number}})</span></div>
+                            <div style="font-size: 1.2em; font-weight: bold; color: red;">- {{(checkoutData |
+                                async).moneyChange | number}} ₭
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container
+                        *ngIf="(checkoutData | async).moneyReceive + (checkoutData | async).moneyCoupon === (checkoutData | async).total || (checkoutData | async).moneyChange === 0">
+                        <div class="money-change" style="margin-top: 5px;">
+                            <div style="display: flex; align-items: center;">ເງິນທອນ <span
+                                    style="font-weight: bold; color: green;"
+                                    *ngIf="(checkoutData | async).moneyCoupon">(+{{(checkoutData | async).moneyCoupon |
+                                    number }})</span></div>
+                            <div style="font-size: 1.2em; font-weight: bold;">{{(checkoutData | async).moneyChange |
+                                number}} ₭</div>
+                        </div>
+                    </ng-container>
+                    <div class="row" style="margin: 10px auto 0 auto !important; width: 75% !important;">
+                        <div class="col-12 col-md-4 col-sm-6" *ngFor="let mp of moneyOptions" style="padding: 0;">
+                            <button class="mp-btn" (click)="moneyPicker(mp.amount)">
+                                {{mp.amount | number}} ₭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <ng-container *ngIf="pmodalData.type === 'normal'">
+                    <div *ngIf="select" style="margin-top: 1em;">
+                        <button type="button" pButton label="ຢຶນຢັນ" style="width: 100%; border-radius: 0;"
+                            class="p-button-info" (click)="payByCash()"></button>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="pmodalData.type === 'sep'">
+                    <div *ngIf="select" style="margin-top: 1em;">
+                        <div
+                            *ngIf="checkoutService.data.moneyReceive + checkoutService.data.moneyCoupon >= checkoutService.data.total && checkoutService.data.moneyReceive && (npMoney?.value || pmodalData.statusSep === 'sepOrder') ; then truePrint else falsePrint">
+                        </div>
+                        <ng-template #truePrint>
+                            <button type="button" pButton label="ພິມບິນຊຳລະເງິນ" style="width: 100%; border-radius: 0;"
+                                class="p-button-success mb-2" (click)="sepPrint()" ngxPrint [useExistingCss]="true"
+                                printSectionId="bill-payment-print" (click)="sepPrint()"></button>
+                        </ng-template>
+                        <ng-template #falsePrint>
+                            <button type="button" pButton label="ພິມບິນຊຳລະເງິນ" style="width: 100%; border-radius: 0;"
+                                class="p-button-success mb-2" (click)="sepPrintF()"></button>
+                        </ng-template>
+                        <button type="button" pButton label="ຢຶນຢັນ" style="width: 100%; border-radius: 0;"
+                            class="p-button-info" (click)="payByCash()"></button>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+    </ng-template>
+</p-dialog>

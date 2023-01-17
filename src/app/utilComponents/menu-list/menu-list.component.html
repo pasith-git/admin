@@ -1,0 +1,25 @@
+<div class="menu-list-fixed" [ngClass]="
+(np.getPermissions()['CASHIER'] || np.getPermissions()['WAITER']) &&
+rs.data?.branches.id !== rbid ? 'blurMenu': ''">
+  <button class="bbtn btnprev" appPreventClick (debounceClick)="slide(-1)" [debounceTime]="300" #btnprev>
+    < </button>
+      <button class="bbtn btnnext" appPreventClick (debounceClick)="slide(1)" [debounceTime]="300" #btnnext>></button>
+      <div class="menu-layout">
+        <ul class="menu-list" #menulist>
+          <li class="layout-link">
+            <button class="link" (click)="modalShow(rbid)">
+              <div class="link-title">{{rbname}}</div>
+            </button>
+            <!-- modal -->
+
+            <p-dialog [header]="rbname" [(visible)]="modalDisplay" [style]="{width: '100vw', height: '100vh'}"
+              [draggable]="false" [modal]="true" [dismissableMask]="true" #dialog>
+              <div class="m-nav-card" style="padding: 2px;">
+                <div class="container-fluid p-0">
+                  <mananagement-nav-card [bid]="rbid"></mananagement-nav-card>
+                </div>
+              </div>
+            </p-dialog>
+        </ul>
+      </div>
+</div>

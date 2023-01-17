@@ -1,0 +1,159 @@
+<dynamic-crud [data$]="data$" [col]="col" (modalShow)="modalDisplay=$event" (dpEdit)="dpEditEvent($event)"
+    (dpRemove)="dpRemoveEvent($event)" [disabled]="disabled"></dynamic-crud>
+
+<pmodal-crud [modalDisplay]="modalDisplay" modalHeaderName="ຂໍ້ມູນຄູປອງ" (modalHide)="onHide($event)"
+    [modalDefault]="true" [imagePath]="imagePath" clText="ຂໍ້ມູນຄູປອງ">
+    <ng-template #body>
+        <div style="height: 75vh; position: relative; display: flex; align-items: center;">
+            <form [formGroup]="form" style="width: 100%;" #fb (submit)="create()" (keyup.enter)="create()">
+                <div class="form-group row" style="justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ເປີເຊັນສ່ວນຫຼຸດ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="number" pInputText placeholder="ເປີເຊັນສ່ວນຫຼຸດ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="percentCoupon" />
+                            <state-input [form]="form" [control]="percentCoupon" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="percentCoupon.dirty && percentCoupon.invalid && (percentCoupon.touched || percentCoupon.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="percentCoupon" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ວັນໝົດອາຍຸ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="date" pInputText placeholder="ວັນໝົດອາຍຸ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="expiredDate" />
+                            <state-input [form]="form" [control]="expiredDate" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="expiredDate.dirty && expiredDate.invalid && (expiredDate.touched || expiredDate.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="expiredDate" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                            <state-input [form]="form" [control]="expiredDate" errControl="dateBeforeFailed"
+                                errMessage="ວັນທີບໍ່ຖືກຕ້ອງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row" style="justify-content: center; margin-top: 2em !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ສ້າງຄູປອງ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 50px; justify-content: center;"
+                            #inp>
+                            <!-- generate code -->
+                            <div style="text-align: center; display: flex; align-items: center; width: 100%">
+                                <button class="btn-gcode" (click)="generateCode()" type="button">generate code</button>
+                                <input type="number"
+                                    style="height: 100%; width: 25%; border: 1px solid #ced4da; text-align: center;"
+                                    [(ngModel)]="amount" [ngModelOptions]="{standalone: true}">
+                            </div>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ສະແດງສະຖານະ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 50px;" #inp>
+                            <ul class="role-layout">
+                                <div *ngIf="gcodes.length === 0" style="grid-column: 1 / 4; justify-content: center
+                                ; grid-row: span 2; display: flex; align-items: center
+                                ;">(ລະຫັດຄູປອງ)</div>
+                                <li *ngFor="let gcode of gcodes; let i=index" class="role-list">
+                                    <div style="width: 100%;">{{gcode}}</div>
+                                    <button (click)="removeCodeSelection(i)" type="button" class="role-btn">x</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div style="width: 100%; position: absolute; bottom: 0; display: flex; justify-content: center;">
+
+                    <button pButton pRipple type="button" label="ຢືນຢັນ" class="p-button-info" style="width: 8em;"
+                        type="submit"></button>
+                </div>
+            </form>
+
+        </div>
+    </ng-template>
+</pmodal-crud>
+
+<pmodal-crud [modalEditDisplay]="modalEditDisplay" modalHeaderName="ຂໍ້ມູນຄູປອງ" (modalHide)="onHide($event)"
+    [modalDefault]="false" [imagePath]="imagePath" clText="ຂໍ້ມູນຄູປອງ">
+    <ng-template #body>
+        <div style="height: 75vh; position: relative; display: flex; align-items: center;">
+            <form [formGroup]="form" style="width: 100%;" #fb (submit)="update()" (keyup.enter)="update()">
+                <div class="form-group row" style="justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ເປີເຊັນສ່ວນຫຼຸດ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="number" pInputText placeholder="ເປີເຊັນສ່ວນຫຼຸດ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="percentCoupon" />
+                            <state-input [form]="form" [control]="percentCoupon" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="percentCoupon.dirty && percentCoupon.invalid && (percentCoupon.touched || percentCoupon.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="percentCoupon" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ວັນໝົດອາຍຸ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="date" pInputText placeholder="ວັນໝົດອາຍຸ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="expiredDate" />
+                            <state-input [form]="form" [control]="expiredDate" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="expiredDate.dirty && expiredDate.invalid && (expiredDate.touched || expiredDate.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="expiredDate" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                            <state-input [form]="form" [control]="expiredDate" errControl="dateBeforeFailed"
+                                errMessage="ວັນທີບໍ່ຖືກຕ້ອງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row" style="justify-content: center; margin-top: 2em !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ລະຫັດຄູປອງ</label>
+                    <div class="col-sm-8">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ວັນໝົດອາຍຸ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="code" />
+                            <state-input [form]="form" [control]="code" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="code.dirty && code.invalid && (code.touched || code.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="code" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+                <div style="width: 100%; position: absolute; bottom: 0; display: flex; justify-content: center;">
+
+                    <button pButton pRipple type="button" label="ຢືນຢັນ" class="p-button-info" style="width: 8em;"
+                        type="submit"></button>
+                </div>
+            </form>
+        </div>
+    </ng-template>
+</pmodal-crud>
+
+<p-confirmDialog header="ຍືນຍັນ" icon="pi pi-exclamation-triangle" #cd>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton label="Yes" (click)="cd.accept()"></button>
+        <button type="button" pButton label="No" (click)="cd.reject()"></button>
+    </ng-template>
+</p-confirmDialog>

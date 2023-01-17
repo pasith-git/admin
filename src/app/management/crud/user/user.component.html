@@ -1,0 +1,409 @@
+<dynamic-crud [data$]="data$" [col]="col" (modalShow)="modalDisplay=$event" (dpEdit)="dpEditEvent($event)"
+    (dpRemove)="dpRemoveEvent($event)" [disabled]="disabled" [extraColCheck]="true" [extraCol]="extraCol"
+    extraColKey="profile">
+</dynamic-crud>
+
+<pmodal-crud [modalDisplay]="modalDisplay" modalHeaderName="ຂໍ້ມູນຜູ້ໃຊ້" (modalHide)="onHide($event)"
+    [modalDefault]="true" [imagePath]="imagePath" clText="ຂໍ້ມູນຜູ້ໃຊ້">
+    <ng-template #body>
+        <div style="height: 75vh; position: relative; display: flex; align-items: center;">
+            <form [formGroup]="form" style="width: 100%;" #fb (submit)="create()" (keyup.enter)="create()">
+                <div class="form-group row" style="justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຊື່ຜູ້ໃຊ້</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ຊື່ຜູ້ໃຊ້"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="username" />
+                            <state-input [form]="form" [control]="username" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="username.dirty && username.invalid && (username.touched || username.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="username" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ລະຫັດຜ່ານ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="password" pInputText placeholder="ລະຫັດຜ່ານ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="password" />
+                            <state-input [form]="form" [control]="password" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="password.dirty && password.invalid && (password.touched || password.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="password" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row" style="justify-content: center; margin-top: 2rem !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຊື່ຈິງ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ຊື່ຈິງ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="firstname" />
+                            <state-input [form]="form" [control]="firstname" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="firstname.dirty && firstname.invalid && (firstname.touched || firstname.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="firstname" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ນາມສະກຸຸນ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ນາມສະກຸຸນ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="lastname" />
+                            <state-input [form]="form" [control]="lastname" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="lastname.dirty && lastname.invalid && (lastname.touched || lastname.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="lastname" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row" style="justify-content: center; margin-top: 2em !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ເພດ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;" #inp>
+                            <p-dropdown [options]="genderSelection" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="gender" placeholder="ເລືອກເພດ" scrollHeight="200px" [filter]="true"
+                                filterBy="name">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="gender.dirty && gender.invalid && (gender.touched || gender.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="gender" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ເບີໂທ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="+85620XXXXXXXX"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="phone" />
+                            <state-input [form]="form" [control]="phone" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="phone.dirty && phone.invalid && (phone.touched || phone.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="phone" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row" style="margin: 2em 0 2em 0 !important; justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ບ້ານ</label>
+                    <div class="col-sm-8">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ບ້ານ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="village" />
+                            <state-input [form]="form" [control]="village" [boxControl]="true">
+                            </state-input>
+                        </div>
+                        <div *ngIf="village.dirty && village.invalid && (village.touched || village.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="village" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row" style="justify-content: center; margin-top: 1em !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ເມືອງ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;" #inp>
+                            <p-dropdown [options]="districtSelection" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="districtId" placeholder="ເລືອກເມືອງ" scrollHeight="200px"
+                                [filter]="true" filterBy="name" [disabled]="districtSelection.length===0"
+                                appendTo="body">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="districtId.dirty && districtId.invalid && (districtId.touched || districtId.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="districtId" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ແຂວງ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;" #inp>
+                            <p-dropdown [options]="provinceSelection" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="provinceId" placeholder="ເລືອກແຂວງ" scrollHeight="200px"
+                                [filter]="true" filterBy="name" (onChange)="activeProvince($event)" appendTo="body">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="provinceId.dirty && provinceId.invalid && (provinceId.touched || provinceId.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="provinceId" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row" style="justify-content: center; margin-top: 2em !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ສະຖານະ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;" #inp>
+                            <p-dropdown [options]="rolesSelection" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '50px', 'borderRadius':0}"
+                                placeholder="ເລືອກສະຖານະ" scrollHeight="200px" [filter]="true" filterBy="name"
+                                appendTo="body" (onChange)="activeRoles($event.value)">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ສະແດງສະຖານະ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;" #inp>
+                            <ul class="role-layout">
+                                <div *ngIf="roles.length === 0" style="grid-column: 1 / 4; justify-content: center
+                                ; grid-row: span 2; display: flex; align-items: center
+                                ;">(ຂໍ້ມູນສະຖານະ)</div>
+                                <li *ngFor="let role of roles; let i=index" class="role-list">
+                                    <div style="width: 100%;">{{role.name}}</div>
+                                    <button (click)="removeRoleSelection(i)" type="button" class="role-btn">x</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="width: 100%; position: absolute; bottom: 0; display: flex; justify-content: center;">
+
+                    <button pButton pRipple type="button" label="ຢືນຢັນ" class="p-button-info" style="width: 8em;"
+                        type="submit"></button>
+                </div>
+            </form>
+
+        </div>
+    </ng-template>
+</pmodal-crud>
+
+
+<pmodal-crud [modalEditDisplay]="modalEditDisplay" modalHeaderName="ຂໍ້ມູນຜູ້ໃຊ້" (modalHide)="onHide($event)"
+    [modalDefault]="false" [imagePath]="imagePath" clText="ຂໍ້ມູນຜູ້ໃຊ້">
+    <ng-template #body>
+        <div style="height: 75vh; position: relative; display: flex; align-items: center;">
+            <form [formGroup]="form" style="width: 100%;" #fb (submit)="update()" (keyup.enter)="update()">
+                <div class="form-group row" style="justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຊື່ຜູ້ໃຊ້</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ຊື່ຜູ້ໃຊ້"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="username" />
+                            <state-input [form]="form" [control]="username" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="username.dirty && username.invalid && (username.touched || username.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="username" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ລະຫັດຜ່ານ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="password" pInputText placeholder="ລະຫັດຜ່ານ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="password" />
+                            <state-input [form]="form" [control]="password" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="password.dirty && password.invalid && (password.touched || password.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="password" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row" style="justify-content: center; margin-top: 2rem !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຊື່ຈິງ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ຊື່ຈິງ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="firstname" />
+                            <state-input [form]="form" [control]="firstname" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="firstname.dirty && firstname.invalid && (firstname.touched || firstname.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="firstname" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ນາມສະກຸຸນ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ນາມສະກຸຸນ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="lastname" />
+                            <state-input [form]="form" [control]="lastname" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="lastname.dirty && lastname.invalid && (lastname.touched || lastname.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="lastname" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row" style="justify-content: center; margin-top: 2em !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ເພດ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;" #inp>
+                            <p-dropdown [options]="genderSelection" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="gender" placeholder="ເລືອກເພດ" scrollHeight="200px" [filter]="true"
+                                filterBy="name">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="gender.dirty && gender.invalid && (gender.touched || gender.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="gender" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ເບີໂທ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="+85620XXXXXXXX"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="phone" />
+                            <state-input [form]="form" [control]="phone" [boxControl]="true"></state-input>
+                        </div>
+                        <div *ngIf="phone.dirty && phone.invalid && (phone.touched || phone.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="phone" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row" style="margin: 2em 0 2em 0 !important; justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ບ້ານ</label>
+                    <div class="col-sm-8">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ບ້ານ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="village" />
+                            <state-input [form]="form" [control]="village" [boxControl]="true">
+                            </state-input>
+                        </div>
+                        <div *ngIf="village.dirty && village.invalid && (village.touched || village.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="village" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row" style="justify-content: center; margin-top: 1em !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ເມືອງ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;" #inp>
+                            <p-dropdown [options]="districtSelection" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="districtId" placeholder="ເລືອກເມືອງ" scrollHeight="200px"
+                                [filter]="true" filterBy="name" [disabled]="districtSelection.length===0"
+                                appendTo="body">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="districtId.dirty && districtId.invalid && (districtId.touched || districtId.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="districtId" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ແຂວງ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;" #inp>
+                            <p-dropdown [options]="provinceSelection" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="provinceId" placeholder="ເລືອກແຂວງ" scrollHeight="200px"
+                                [filter]="true" filterBy="name" (onChange)="activeProvince($event)" appendTo="body">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="provinceId.dirty && provinceId.invalid && (provinceId.touched || provinceId.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="provinceId" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row" style="justify-content: center; margin-top: 2em !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ສະຖານະ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;" #inp>
+                            <p-dropdown [options]="rolesSelection" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '50px', 'borderRadius':0}"
+                                placeholder="ເລືອກສະຖານະ" scrollHeight="200px" [filter]="true" filterBy="name"
+                                appendTo="body" (onChange)="activeRoles($event.value)">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ສະແດງສະຖານະ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;" #inp>
+                            <ul class="role-layout">
+                                <div *ngIf="roles.length === 0" style="grid-column: 1 / 4; justify-content: center
+                                ; grid-row: span 2; display: flex; align-items: center
+                                ;">(ຂໍ້ມູນສະຖານະ)</div>
+                                <li *ngFor="let role of roles; let i=index" class="role-list">
+                                    <div style="width: 100%;">{{role.name}}</div>
+                                    <button (click)="removeRoleSelection(i)" type="button" class="role-btn">x</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div style="width: 100%; position: absolute; bottom: 0; display: flex; justify-content: center;">
+
+                    <button pButton pRipple type="button" label="ຢືນຢັນ" class="p-button-info" style="width: 8em;"
+                        type="submit"></button>
+                </div>
+            </form>
+
+        </div>
+    </ng-template>
+</pmodal-crud>
+
+<p-confirmDialog header="ຍືນຍັນ" icon="pi pi-exclamation-triangle" #cd>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton label="Yes" (click)="cd.accept()"></button>
+        <button type="button" pButton label="No" (click)="cd.reject()"></button>
+    </ng-template>
+</p-confirmDialog>

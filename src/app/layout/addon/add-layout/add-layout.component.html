@@ -1,0 +1,36 @@
+<div id="wrapper">
+  <div class="main-header">
+    <app-header></app-header>
+  </div>
+  <div class="main-content-fixed" id="main-content-fixed">
+    <div style="position: relative; left: 50%;">
+      <ngx-spinner size="default" color="#000000" type="ball-spin">
+      </ngx-spinner>
+    </div>
+    <div class="main-content">
+      <app-breadcrumb></app-breadcrumb>
+      <ng-container *ngIf="showMenu === 'reports'">
+        <menu-report-header [menuList]="reportMenuList"></menu-report-header>
+      </ng-container>
+      <ng-container *ngIf="showMenu === 'crud'">
+        <app-branch-board></app-branch-board>
+        <menu-report-header [menuList]="crudMenuList"></menu-report-header>
+      </ng-container>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  <div class="main-footer">
+    <app-footer></app-footer>
+  </div>
+</div>
+<p-toast [preventOpenDuplicates]="true"></p-toast>
+<p-dialog header="Permission Denied" [visible]="modalP | async" (visibleChange)="modalPChange()" [modal]="true"
+  [style]="{width: '20vw'}" [draggable]="false" [resizable]="false">
+  <h5 class="m-0">
+    ບໍ່ມີສິດໃນການໃຊ້
+  </h5>
+  <ng-template pTemplate="footer">
+    <p-button icon="pi pi-check" (click)="modalPHide()" label="Ok" styleClass="p-button-text"></p-button>
+  </ng-template>
+</p-dialog>
+<router-outlet name="print"></router-outlet>

@@ -1,0 +1,67 @@
+.p-card-bank {
+    padding: 0 !important;
+}
+
+
+@media (min-width: 768px) {
+    .col-md-9 {
+        width: 71%;
+    }
+
+    .col-md-3 {
+        width: 29%;
+    }
+}
+
+
+@media (max-width: 567px) {
+    .col-md-9 {
+        width: 100%;
+    }
+
+    .col-md-3 {
+        width: 100%;
+    }
+}
+
+:host ::ng-deep .cal {
+    position: fixed;
+    top: 25%;
+    right: 10%;
+}
+
+@media only screen and (max-width: 1750px) {
+    :host ::ng-deep .cal {
+        right: 5%;
+    }
+}
+
+@media only screen and (max-width: 1450px) {
+    :host ::ng-deep .cal {
+        right: 0%;
+    }
+}
+
+@media only screen and (max-width: 1250px) {
+    :host ::ng-deep .cal {
+        right: -5%;
+    }
+}
+
+@media only screen and (max-width: 1064px) {
+    :host ::ng-deep .cal {
+        right: -10%;
+    }
+}
+
+@media only screen and (max-width: 940px) {
+    :host ::ng-deep .cal {
+        right: -15%;
+    }
+}
+
+@media only screen and (max-width: 840px) {
+    :host ::ng-deep .cal {
+        right: -20%;
+    }
+}

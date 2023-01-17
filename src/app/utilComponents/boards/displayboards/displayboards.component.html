@@ -1,0 +1,18 @@
+<div class="board-layout">
+  <div class="board-header p-2">
+    <div class="board-header-text board-text">
+      ພາບລວມ
+    </div>
+  </div>
+  <div class="board-body-layout p-2">
+    <div class="board-body row">
+      <ng-container *ngFor="let data of data">
+        <temBoards [totalData]="data" [ngClass]="'col-12 col-md-1 col-sm-6'" [ngStyle]="{width: '250px'}">
+          <ng-template let-data #pboard>
+            <app-each-board [total]="data.total" [name]="data.name" [icon]="data.icon"></app-each-board>
+          </ng-template>
+        </temBoards>
+      </ng-container>
+    </div>
+  </div>
+</div>

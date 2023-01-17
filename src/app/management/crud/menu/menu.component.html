@@ -1,0 +1,556 @@
+<dynamic-crud [data$]="data$" [col]="col" (modalShow)="modalDisplay=$event" (dpEdit)="dpEditEvent($event)"
+    (dpRemove)="dpRemoveEvent($event)" [disabled]="disabled" [extraColCheck]="true" [extraCol]="extraCol"
+    (eventFullPic)="resizeFullPic($event)" extraColKey="menudetails">
+</dynamic-crud>
+
+<pmodal-crud [modalDisplay]="modalDisplay" modalHeaderName="ຂໍ້ມູນເມນູ" (modalHide)="onHide($event)"
+    [modalDefault]="true" [imagePath]="imagePath" clText="ຂໍ້ມູນເມນູ">
+    <ng-template #body>
+        <div style="height: 75vh; position: relative; display: flex; align-items: center; overflow-y: auto;">
+            <form [formGroup]="form" style="width: 100%; height: 100%" #fb (submit)="create()" (keyup.enter)="create()"
+                enctype="multipart/form-data">
+                <div class="wrapper">
+                    <div class="form-group row"
+                        style="margin: 1em 0 2em 0 !important; justify-content: center; position: relative;">
+                        <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                            style="font-weight: bold;">ຊື່</label>
+                        <div class="col-sm-8">
+                            <div class="p-inputgroup" style="position: relative; height: 100%;">
+                                <input type="text" pInputText placeholder="ຊື່ (ລາວ)"
+                                    [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="name" />
+                                <state-input [form]="form" [control]="name" [boxControl]="true">
+                                </state-input>
+                            </div>
+                            <div *ngIf="name.dirty && name.invalid && (name.touched || name.untouched)"
+                                style="color: #f44336; position: absolute; margin-top: 3px;">
+                                <state-input [form]="form" [control]="name" errControl="required"
+                                    errMessage="ບໍ່ໃຫ້ວ່າງ">
+                                </state-input>
+                                <state-input [form]="form" [control]="name" errControl="loFailed"
+                                    errMessage="ປ້ອນເປັນພາສາລາວ"></state-input>
+                            </div>
+                        </div>
+                        <!-- <div class="multi-languages-layout" appOutClick (outClick)="languagesDropEvent()">
+                            <div style="position: relative;">
+                                <button class="multi-languages" type="button"><i class="pi pi-flag-fill"
+                                        style="font-size: 1.3rem;" (click)="mlOpen()"></i></button>
+                                <div *ngIf="ml" class="dropdown-multi-languages" @animate>
+                                    <ul>
+                                        <li>
+                                            <input type="text" formControlName="nameLa" (blur)="nameLaEvent()"
+                                                placeholder="ຊື່ (LA)">
+                                            <div style="display: flex; align-items: center; padding: 5px;">
+                                                <img src="assets/images/laos.png" alt="">
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <input type="text" formControlName="nameTh" (blur)="nameThEvent()"
+                                                placeholder="ຊື່ (TH)">
+                                            <div style="display: flex; align-items: center; padding: 5px;">
+                                                <img src="assets/images/thailand.png" alt="">
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div> -->
+                    </div>
+
+                </div>
+                <!-- multilanguages -->
+                <div class="ml-layout">
+                    <div class="form-group row" style="justify-content: center;">
+                        <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                            style="font-weight: bold;">ຊື່ (ຫຼາຍພາສາ)</label>
+                        <div class="col-sm-8" style="display: flex; flex-direction: column;">
+                            <div *ngFor="let ml of languageData" class="col-sm-12" style="display: flex;">
+                                <div *ngFor="let nml of ml; let i = index" class="col-sm-6">
+                                    <div style="padding: 5px;" [ngClass]="i % 2 !== 0 ? 'wright' : 'wleft'">
+                                        <input type="text" pInputText placeholder="ຊື່ ({{nml.name}})"
+                                            [attr.data-code]="nml.languageCode"
+                                            [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)','width':'100%', 'height': '50px'}"
+                                            #mlInput (blur)="checkMl(nml.languageCode)" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ml -->
+                <!-- <div *ngFor="let ml of languageData">{{ml.name}}</div>         -->
+                <div class="form-group row" style="justify-content: center; margin-top: 2rem !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ປະເພດ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <p-dropdown [options]="categoryOptions" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="category" placeholder="ເລຶອກປະເພດ" [filter]="true" filterBy="name">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="category.dirty && category.invalid && (category.touched || category.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="category" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                                style="color: #f44336; position: absolute; margin-top: 3px;">
+                                <state-input [form]="form" [control]="placement" errControl="required"
+                                    errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                                <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                    errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                            </div> -->
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຫົວໜ່ວຍ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <p-dropdown [options]="unitOptions" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="unit" placeholder="ເລືອກຫົວໜ່ວຍ" [filter]="true" filterBy="name">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="unit.dirty && unit.invalid && (unit.touched || unit.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="unit" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="placement" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                            <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                        </div> -->
+                    </div>
+                </div>
+
+                <div class="form-group row" style="justify-content: center; margin-top: 2rem !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ລາຄາ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="number" pInputText placeholder="ລາຄາ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="price" />
+                            <state-input [form]="form" [control]="price" [boxControl]="true">
+                            </state-input>
+                        </div>
+                        <div *ngIf="price.dirty && price.invalid && (price.touched || price.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="price" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                            <state-input [form]="form" [control]="price" errControl="min"
+                                errMessage="ປ້ອນຈຳນວນ 1 ຂຶ້ນໄປ"></state-input>
+                        </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                                style="color: #f44336; position: absolute; margin-top: 3px;">
+                                <state-input [form]="form" [control]="placement" errControl="required"
+                                    errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                                <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                    errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                            </div> -->
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">image</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="file" pInputText placeholder="image" accept="image/*"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="image" #file
+                                (change)="imageUploaded(file)" />
+                            <state-input [form]="form" [control]="image" [boxControl]="true">
+                            </state-input>
+                        </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                            <state-input [form]="form" [control]="placement" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                            <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                        </div> -->
+                    </div>
+                </div>
+                <hr style="margin: 2rem 0 1rem 0;">
+                <div class="menudetails">
+                    <div class="header">
+                        <div>
+                            <p-dropdown [options]="productOptions" optionLabel="name" optionValue="code" class="fixedDd"
+                                [style]="{'width': '15rem', 'marginLeft': 0,'borderRadius':0}"
+                                placeholder="ເລຶອກວັດຖຸດິບ" [filter]="true" filterBy="name" formControlName="product">
+                            </p-dropdown>
+                            <p-inputNumber mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0"
+                                [max]="100" [style]="{'marginLeft': '10px'}" formControlName="amount"
+                                [minFractionDigits]="0" [maxFractionDigits]="3" [inputStyle]="{'width': '5rem'}">
+                            </p-inputNumber>
+                            <p-dropdown [options]="menudetailsStatus" optionLabel="name" optionValue="code"
+                                [style]="{'width': '15rem', 'marginLeft': '10px','borderRadius':0}"
+                                placeholder="ເລຶອກສະຖານະ" [filter]="true" filterBy="name" formControlName="status">
+                            </p-dropdown>
+                            <button pButton pRipple type="button" label="ເພິ່ມວັດຖຸດິບ" class="p-button-success"
+                                style="border-radius: 0; margin-left: 10px;" (click)="addedMenudetails()"></button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="body">
+                        <div class="table-layout" @animate *ngIf="menudetails.length > 0">
+                            <table id="menudetails-table">
+                                <thead>
+                                    <tr>
+                                        <th>ລຳດັບ</th>
+                                        <th style="width: 10vw;">ຊື່</th>
+                                        <th>ຈຳນວນ</th>
+                                        <th style="width: 10vw;">ສະຖານະ</th>
+                                        <th style="width: 5vw;">ລົບ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngFor="let data of menudetails let i = index">
+                                        <tr>
+                                            <td style="text-align: center;">{{i + 1}}</td>
+                                            <td class="productName-td" attr.data-td="productName-{{i}}">
+                                                <ng-container *ngIf="productNameEdit === i">
+                                                    <p-dropdown [options]="productOptions" optionLabel="name"
+                                                        optionValue="code"
+                                                        [style]="{'width': '100%', 'marginLeft': 0,'borderRadius':0}"
+                                                        [placeholder]="data[data.stockId].productName" [filter]="true"
+                                                        filterBy="name"
+                                                        (onChange)="productNameEditEvent($event, i, data.stockId)"
+                                                        appendTo="body">
+                                                    </p-dropdown>
+                                                </ng-container>
+                                                <ng-container *ngIf="productNameEdit !== i">
+                                                    {{data[data.stockId].productName}}
+                                                </ng-container>
+                                            </td>
+                                            <td class="amount-td" attr.data-td="amount-{{i}}"
+                                                style="text-align: center;">
+                                                <ng-container *ngIf="amountEdit === i">
+                                                    <p-inputNumber inputId="minmax" inputId="minmax" mode="decimal"
+                                                        [minFractionDigits]="0" [maxFractionDigits]="3" [min]="0"
+                                                        [max]="100" [placeholder]="data[data.stockId].amount"
+                                                        (onBlur)="amountNameEditEvent($event, i, data.stockId)"
+                                                        [(ngModel)]="amountEditValue"
+                                                        [ngModelOptions]="{standalone: true}">
+                                                    </p-inputNumber>
+                                                </ng-container>
+                                                <ng-container *ngIf="amountEdit !== i">
+                                                    {{data[data.stockId].amount}}
+                                                </ng-container>
+                                            </td>
+                                            <td class="status-td" attr.data-td="status-{{i}}">
+                                                <ng-container *ngIf="statusEdit === i">
+                                                    <p-dropdown [options]="menudetailsStatus" optionLabel="name"
+                                                        optionValue="code"
+                                                        [style]="{'width': '100%', 'marginLeft': 0,'borderRadius':0}"
+                                                        [placeholder]="data[data.stockId].status" [filter]="true"
+                                                        filterBy="name"
+                                                        (onChange)="statusEditEvent($event, i, data.stockId)"
+                                                        appendTo="body">
+                                                    </p-dropdown>
+                                                </ng-container>
+                                                <ng-container *ngIf="statusEdit !== i">
+                                                    {{data[data.stockId].status}}
+                                                </ng-container>
+                                            </td>
+                                            <td style="text-align: center;"><button pButton pRipple type="button"
+                                                    icon="pi pi-minus-circle" class="p-button-rounded p-button-danger"
+                                                    (click)="deletedMenudetails(i)"></button></td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div *ngIf="menudetails.length === 0">
+                        <data-empty message="ເລືອກວັດຖຸດິບ"></data-empty>
+                    </div>
+
+                </div>
+                <div style="width: 100%; display: flex; justify-content: center;">
+                    <button pButton pRipple type="button" label="ຢືນຢັນ" class="p-button-info" style="width: 8em;"
+                        type="submit"></button>
+                </div>
+
+            </form>
+
+        </div>
+    </ng-template>
+</pmodal-crud>
+
+<pmodal-crud [modalEditDisplay]="modalEditDisplay" modalHeaderName="ຂໍ້ມູນເມນູ" (modalHide)="onHide($event)"
+    [modalDefault]="false" [imagePath]="imagePath" clText="ຂໍ້ມູນເມນູ">
+    <ng-template #body>
+        <div style="height: 75vh; position: relative; display: flex; align-items: center; overflow-y: auto;">
+            <form [formGroup]="form" style="width: 100%; height: 100%" #fb (submit)="update()" (keyup.enter)="update()"
+                enctype="multipart/form-data">
+                <div class="form-group row"
+                    style="margin: 1em 0 2em 0 !important; justify-content: center; position: relative;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຊື່</label>
+                    <div class="col-sm-8">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ຊື່"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="name" />
+                            <state-input [form]="form" [control]="name" [boxControl]="true">
+                            </state-input>
+                        </div>
+                        <div *ngIf="name.dirty && name.invalid && (name.touched || name.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="name" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                            <state-input [form]="form" [control]="name" errControl="loFailed"
+                                errMessage="ປ້ອນເປັນພາສາລາວ"></state-input>
+                        </div>
+                    </div>
+                    <!-- <div class="multi-languages-layout" appOutClick (outClick)="languagesDropEvent()">
+                        <div style="position: relative;">
+                            <button class="multi-languages" type="button"><i class="pi pi-flag-fill"
+                                    style="font-size: 1.3rem;" (click)="mlOpen()"></i></button>
+                            <div *ngIf="ml" class="dropdown-multi-languages" @animate>
+                                <ul>
+                                    <li>
+                                        <input type="text" formControlName="nameLa" (blur)="nameLaEvent()"
+                                            placeholder="ຊື່ (LA)">
+                                        <div style="display: flex; align-items: center; padding: 5px;">
+                                            <img src="assets/images/laos.png" alt="">
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <input type="text" formControlName="nameTh" (blur)="nameThEvent()"
+                                            placeholder="ຊື່ (TH)">
+                                        <div style="display: flex; align-items: center; padding: 5px;">
+                                            <img src="assets/images/thailand.png" alt="">
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div> -->
+                </div>
+                <div class="ml-layout" *ngIf="languageDataEdit.length > 0">
+                    <div class="form-group row" style="justify-content: center;">
+                        <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                            style="font-weight: bold;">ຊື່ (ຫຼາຍພາສາ)</label>
+                        <div class="col-sm-8" style="display: flex; flex-direction: column;">
+                            <div *ngFor="let ml of languageDataEdit" class="col-sm-12" style="display: flex;">
+                                <div *ngFor="let nml of ml; let i = index" class="col-sm-6">
+                                    <div style="padding: 5px;" [ngClass]="i % 2 !== 0 ? 'wright' : 'wleft'">
+                                        <input type="text" pInputText [value]="nml.name"
+                                            [attr.data-code]="nml.languageCode" [attr.data-id]="nml.id"
+                                            [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)','width':'100%', 'height': '50px'}"
+                                            #mlInputEdit (blur)="checkMlEdit(nml.languageCode, nml.name)" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row" style="justify-content: center; margin-top: 2rem !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ປະເພດ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <p-dropdown [options]="categoryOptions" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="category" placeholder="ເລຶອກປະເພດ" [filter]="true" filterBy="name">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="category.dirty && category.invalid && (category.touched || category.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="category" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                                style="color: #f44336; position: absolute; margin-top: 3px;">
+                                <state-input [form]="form" [control]="placement" errControl="required"
+                                    errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                                <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                    errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                            </div> -->
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຫົວໜ່ວຍ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <p-dropdown [options]="unitOptions" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="unit" placeholder="ເລືອກຫົວໜ່ວຍ" [filter]="true" filterBy="name">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="unit.dirty && unit.invalid && (unit.touched || unit.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="unit" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="placement" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                            <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                        </div> -->
+                    </div>
+                </div>
+
+                <div class="form-group row" style="justify-content: center; margin-top: 2rem !important;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ລາຄາ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="number" pInputText placeholder="ລາຄາ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="price" />
+                            <state-input [form]="form" [control]="price" [boxControl]="true">
+                            </state-input>
+                        </div>
+                        <div *ngIf="price.dirty && price.invalid && (price.touched || price.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="price" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                            <state-input [form]="form" [control]="price" errControl="min"
+                                errMessage="ປ້ອນຈຳນວນ 1 ຂຶ້ນໄປ"></state-input>
+                        </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                                style="color: #f44336; position: absolute; margin-top: 3px;">
+                                <state-input [form]="form" [control]="placement" errControl="required"
+                                    errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                                <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                    errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                            </div> -->
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">image</label>
+                    <div class="col-sm-3" style="position: relative">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="file" pInputText placeholder="image" accept="image/*"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="image" #file
+                                (change)="imageUploaded(file)" />
+                            <state-input [form]="form" [control]="image" [boxControl]="true">
+                            </state-input>
+                        </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                            <state-input [form]="form" [control]="placement" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                            <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                        </div> -->
+                    </div>
+                </div>
+                <hr style="margin: 2rem 0 1rem 0;">
+                <div class="menudetails">
+                    <div class="header">
+                        <div>
+                            <p-dropdown [options]="productOptions" optionLabel="name" optionValue="code"
+                                [style]="{'width': '15rem', 'marginLeft': 0,'borderRadius':0}"
+                                placeholder="ເລຶອກວັດຖຸດິບ" [filter]="true" filterBy="name" formControlName="product">
+                            </p-dropdown>
+                            <p-inputNumber mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0"
+                                [max]="100" [style]="{'marginLeft': '10px'}" formControlName="amount"
+                                [minFractionDigits]="0" [maxFractionDigits]="3" [inputStyle]="{'width': '5rem'}">
+                            </p-inputNumber>
+                            <p-dropdown [options]="menudetailsStatus" optionLabel="name" optionValue="code"
+                                [style]="{'width': '15rem', 'marginLeft': '10px','borderRadius':0}"
+                                placeholder="ເລຶອກສະຖານະ" [filter]="true" filterBy="name" formControlName="status">
+                            </p-dropdown>
+                            <button pButton pRipple type="button" label="ເພິ່ມ / ແກ້ ວັດຖຸດິບ" class="p-button-success"
+                                style="border-radius: 0; margin-left: 10px;" (click)="addedMenudetailsEdit()"></button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="body">
+                        <div class="table-layout" @animate *ngIf="menudetails.length > 0">
+                            <table id="menudetails-table">
+                                <thead>
+                                    <tr>
+                                        <th>ລຳດັບ</th>
+                                        <th style="width: 10vw;">ຊື່</th>
+                                        <th>ຈຳນວນ</th>
+                                        <th style="width: 10vw;">ສະຖານະ</th>
+                                        <th style="width: 5vw;">ລົບ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngFor="let data of menudetails let i = index">
+                                        <tr>
+                                            <td style="text-align: center;">{{i + 1}}</td>
+                                            <td class="productName-td" attr.data-td="productName-{{i}}">
+                                                <!--   <ng-container *ngIf="productNameEdit === i">
+                                                    <p-dropdown [options]="productOptions" optionLabel="name"
+                                                        optionValue="code"
+                                                        [style]="{'width': '100%', 'marginLeft': 0,'borderRadius':0}"
+                                                        [placeholder]="data[data.stockId].productName" [filter]="true"
+                                                        filterBy="name"
+                                                        (onChange)="productNameEditEvent($event, i, data.stockId)"
+                                                        appendTo="body">
+                                                    </p-dropdown>
+                                                </ng-container>
+                                                <ng-container *ngIf="productNameEdit !== i"> -->
+                                                {{data[data.stockId].productName}}
+                                                <!--         </ng-container> -->
+                                            </td>
+                                            <td class="amount-td" attr.data-td="amount-{{i}}"
+                                                style="text-align: center;">
+                                                <ng-container *ngIf="amountEdit === i">
+                                                    <p-inputNumber inputId="minmax" inputId="minmax" mode="decimal"
+                                                        [minFractionDigits]="0" [maxFractionDigits]="3" [min]="0"
+                                                        [max]="100" [placeholder]="data[data.stockId].amount"
+                                                        (onBlur)="amountNameEditEvent($event, i, data.stockId)"
+                                                        [(ngModel)]="amountEditValue"
+                                                        [ngModelOptions]="{standalone: true}">
+                                                    </p-inputNumber>
+                                                </ng-container>
+                                                <ng-container *ngIf="amountEdit !== i">
+                                                    {{data[data.stockId].amount}}
+                                                </ng-container>
+                                            </td>
+                                            <td class="status-td" attr.data-td="status-{{i}}">
+                                                <!--  <ng-container *ngIf="statusEdit === i">
+                                                    <p-dropdown [options]="menudetailsStatus" optionLabel="name"
+                                                        optionValue="code"
+                                                        [style]="{'width': '100%', 'marginLeft': 0,'borderRadius':0}"
+                                                        [placeholder]="data[data.stockId].status" [filter]="true"
+                                                        filterBy="name"
+                                                        (onChange)="statusEditEvent($event, i, data.stockId)"
+                                                        appendTo="body">
+                                                    </p-dropdown>
+                                                </ng-container>
+                                                <ng-container *ngIf="statusEdit !== i"> -->
+                                                {{data[data.stockId].status}}
+                                                <!--       </ng-container> -->
+                                            </td>
+                                            <td style="text-align: center;"><button pButton pRipple type="button"
+                                                    icon="pi pi-minus-circle" class="p-button-rounded p-button-danger"
+                                                    (click)="deletedMenudetailsEdit({menuDetailId: data[data.stockId].id, stockId: data.stockId})"></button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div *ngIf="menudetails.length === 0">
+                        <data-empty message="ເລືອກວັດຖຸດິບ"></data-empty>
+                    </div>
+
+                </div>
+                <div style="width: 100%; display: flex; justify-content: center;">
+                    <button pButton pRipple type="button" label="ຢືນຢັນ" class="p-button-info" style="width: 8em;"
+                        type="submit"></button>
+                </div>
+            </form>
+        </div>
+    </ng-template>
+</pmodal-crud>
+
+
+<p-confirmDialog header="ຍືນຍັນ" icon="pi pi-exclamation-triangle" #cd>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton label="Yes" (click)="cd.accept()"></button>
+        <button type="button" pButton label="No" (click)="cd.reject()"></button>
+    </ng-template>
+</p-confirmDialog>
+
+<app-resize-image [display]="resizeImageDisplay" [urlImage]="resizeImageUrl" (eventClose)="closed()">
+
+</app-resize-image>

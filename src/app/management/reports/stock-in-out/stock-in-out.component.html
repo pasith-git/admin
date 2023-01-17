@@ -1,0 +1,148 @@
+<div class="stockInTable" style="margin-bottom: 5px;">
+  <p-table [value]="data" dataKey="id" [paginator]="true" styleClass="p-datatable-gridlines" [rows]="10" #dt
+    id="ptable-order-main" [columns]="dt" [rowsPerPageOptions]="[10,25,50,{ showAll: 'All' }]">
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="text-align: center; width: 0.2%;" rowspan="2">ລຳດັບ</th>
+        <ng-container *ngFor="let col of col">
+          <th *ngIf="col.field !== 'productName'" [pSortableColumn]="col.field" style="width: 10%; text-align: center;"
+            rowspan="2">{{col.header}}
+            <p-sortIcon [field]="col.field">
+            </p-sortIcon>
+          </th>
+          <th *ngIf="col.field === 'productName'" [pSortableColumn]="col.field" style="width: 10%;">{{col.header}}
+            <p-sortIcon [field]="col.field">
+            </p-sortIcon>
+          </th>
+        </ng-container>
+      </tr>
+      <tr>
+        <ng-container *ngFor="let col of col">
+          <th *ngIf="col.field === 'productName'" style="text-align: center">
+            <input pInputText type="text" class="p-column-filter" style="width: 100%;"
+              (input)="dt.filter($event.target.value, col.field, 'contains')" [value]="dt.filters[co]?.value"
+              [disabled]="disableOption">
+          </th>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="caption">
+      <div class="caption-layout">
+        <div class="caption-content-left">
+          <div class="caption-content">
+            <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()"
+              class="p-button-warning mr-2" pTooltip="PDF" tooltipPosition="bottom" [disabled]="disableOption"></button>
+            <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()"
+              class="p-button-success mr-2" pTooltip="XLS" tooltipPosition="bottom" [disabled]="disableOption"></button>
+          </div>
+          <div class="caption-content" style="margin-left: 1em;">
+            <input type="text" placeholder="ເລືອກວັນທີ" class="form-cntrol pform-datepicker h-100"
+              [bsConfig]="{rangeInputFormat : 'DD-MM-YYYY'}" bsDaterangepicker (bsValueChange)="filterDate($event, dt)"
+              #bsDp="bsDaterangepicker" [disabled]="disableOption">
+          </div>
+        </div>
+        <div class="caption-content-right">
+          <!-- content right -->
+          <button style="background-color: inherit;" (click)="reset(bsDp)">
+            <i class="pi pi-refresh" style="font-size: 1.5em; color: red;"></i>
+          </button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="body" let-data let-expanded="expanded" let-index="rowIndex">
+      <tr>
+        <td style="text-align: center; width: 20px;">{{index + 1}}</td>
+        <ng-container *ngFor="let col of col">
+          <ng-container *ngIf="col.field === 'price'">
+            <td>{{data[col.field] | number}}</td>
+          </ng-container>
+          <ng-container *ngIf="col.field === 'createdAt'">
+            <td>{{data[col.field] | date:'dd-MM-YYYY hh:mm:ss'}}</td>
+          </ng-container>
+          <ng-container *ngIf="col.field === 'amount' || col.field === 'inAmount' || col.field === 'usedAmount'">
+            <td>{{data[col.field] | number : '1.2-2'}}</td>
+          </ng-container>
+          <ng-container
+            *ngIf="col.field !== 'price' && col.field !== 'createdAt' && col.field !== 'amount' && col.field !== 'inAmount' && col.field !== 'usedAmount'">
+            <td>{{data[col.field]}}</td>
+          </ng-container>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <!--  <ng-template pTemplate="footer">
+      <tr>
+        <td colspan="4">ສະຫຼຸບ</td>
+        <td>{{totalQin}}</td>
+        <td>{{totalQout}}</td>
+        <td>{{totalQ}}</td>
+      </tr>
+    </ng-template> -->
+    <ng-template pTemplate="paginatorleft" let-state>
+      <div style="font-weight: bold;">
+        ສະແດງ {{(state.page * state.rows) + 1}} - {{state.rows * (state.page + 1)}} ຈາກທັງໝົດ {{state.totalRecords}}
+        ລາຍການ
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+
+<table id="exportData" *ngIf="dataTable" border="1" [hidden]="true">
+  <tr>
+    <ng-containers *ngFor="let col of col">
+      <th>{{col.header}}</th>
+    </ng-containers>
+  </tr>
+  <ng-container *ngFor="let data of dataTable.dataToRender">
+    <tr>
+      <td>{{data.productName}}</td>
+      <td>{{data.unitName}}</td>
+      <td>{{data.typeName}}</td>
+      <td>{{data.inAmount | number : '1.2-2'}}</td>
+      <td>{{data.usedAmount | number : '1.2-2'}}</td>
+      <td>{{data.amount | number : '1.2-2'}}</td>
+    </tr>
+  </ng-container>
+</table>
+
+<div id="pdfData" #pdfData>
+  <div style="align-self: end; margin: 1rem 0; font-size: 1.2rem; display: flex; justify-content: end;">{{todayDate}}
+  </div>
+  <div style="display: flex; justify-content: space-between">
+    <div class="left" style="display: flex;">
+      <!--  <img src="assets/images/jsl-res-img.png"> -->
+      <ul style="list-style-type: none; padding: 0;" *ngIf="rs.data">
+        <li><span> ຊື່ຮ້ານ: </span>{{rs.data.restaurantName}}</li>
+        <li><span> ສາຂາ: </span>{{rs.data.branches.name}}</li>
+      </ul>
+    </div>
+    <div class="right" style="display: flex;">
+      <ul style="list-style-type: none; padding: 0; text-align: right;" *ngIf="rs.data">
+        <li><span> ທີ່ຢູ່: </span>{{rs.data.branches.address}}</li>
+        <li><span> ເບີໂທ: </span>{{rs.data.branches.phone}}</li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+  <div style="font-size: 2.5rem; text-align:center; margin: 1rem 0; text-decoration: underline;">ລາຍງານ</div>
+  <div style="display: flex;">
+    <table *ngIf="dataTable">
+      <thead>
+        <tr>
+          <th *ngFor="let col of col">{{col.header}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let data of dataTable.dataToRender">
+          <tr>
+            <td>{{data.productName}}</td>
+            <td>{{data.unitName}}</td>
+            <td>{{data.typeName}}</td>
+            <td>{{data.inAmount | number : '1.2-2'}}</td>
+            <td>{{data.usedAmount | number : '1.2-2'}}</td>
+            <td>{{data.amount | number : '1.2-2'}}</td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

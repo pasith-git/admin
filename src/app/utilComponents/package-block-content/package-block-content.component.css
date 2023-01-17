@@ -1,0 +1,136 @@
+
+
+.pb-layout {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    min-width: 500px;
+    position: absolute;
+    top: 0;
+    z-index: 9999;
+    background-color: rgb(160, 160, 160, 0.5);
+}
+
+.pb-content-layout {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.pb-content{
+    background-color: white;
+    position: relative;
+    width: 50rem;
+    height: 40rem;
+    max-height: 500px;
+    min-width: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.pb-header{
+    padding: 5px;
+    font-size: 1.3rem;
+    border-bottom: 1px solid rgb(147, 147, 147);
+}
+
+.pb-c-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    flex-grow: 1;
+}
+
+.qr-content{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.qr-content .body{
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.pb-each-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.pb-each-content {
+    width: 75%;
+    height: 75%;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.pb-each-content.basic .header {
+    border-top: 5px solid rgb(2, 176, 230);
+
+}
+
+
+.pb-each-content.pro .header {
+    border-top: 5px solid rgb(236, 67, 60);
+
+}
+
+.pb-each-content .header {
+    flex-grow: 1;
+}
+
+.pb-each-content .header .content {
+    font-weight: bold;
+    font-size: 1.5rem;
+    flex-grow: 1;
+}
+
+.pb-each-content .body {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.pb-each-content .header .user {
+    font-weight: bold;
+}
+
+.pb-btn{
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    background: transparent;
+    transition: 0.2s;
+}
+
+.pb-btn:hover{
+    background-color: rgb(147, 147, 147);
+    color: white;
+    border: none;
+}
+
+.pb-btn.underline{
+    border-bottom: 1px solid rgb(147, 147, 147);
+}
+
+.p-dialog-footer .p-dropdown{
+    width: 100% !important;
+    margin: 8px;
+}
+.p-dialog-footer .p-dialog-content{
+    padding-bottom: 8px !important;
+}
+
+.p-dialog-footer .p-dropdown-filter-container{
+    display: flex;
+}

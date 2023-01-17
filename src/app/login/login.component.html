@@ -1,0 +1,241 @@
+<!-- <div class="lf-layout">
+  <div class="lf">
+    <div class="lf-header">
+        <h1>###</h1>
+    </div>
+    <div class="lf-body">
+      <form [formGroup]="form">
+        <input type="text" formControlName="username" required>
+        <input type="password" formControlName="password">
+      </form>
+    </div>
+    <div class="lf-footer">
+        <button class="btn-newStyle" (click)="submitForm()">login</button>
+    </div>
+  </div>
+</div> -->
+<div class="pform-layout">
+  <div class="pform">
+    <p-card>
+      <ng-template pTemplate="header">
+
+      </ng-template>
+      <form action="" [formGroup]="loginForm" (ngSubmit)="submitForm()">
+        <div class="pform-content">
+          <div class="pform-header" style="width: 100%; height: 200px; margin-bottom: 1.5em;">
+            <img src="assets/images/rms.png" alt="" style="width: 100%; height: 100%;">
+          </div>
+          <div class="pform-body">
+            <div class="plogin-input-layout" style="margin-bottom: 25px;">
+              <span class="p-float-label">
+                <input id="float-input" type="text" pInputText class="pinput-fixed" formControlName="username"
+                  [autocomplete]="false">
+                <label for="float-input">Username</label>
+              </span>
+            </div>
+            <div class="plogin-input-layout">
+              <span class="p-float-label">
+                <input id="float-input" type="password" pInputText class="pinput-fixed" formControlName="password"
+                  [autocomplete]="false">
+                <label for="float-input">Password</label>
+              </span>
+            </div>
+            <ng-container *ngIf="errMessage">
+              <div style="color: red; padding: 5px 0 ;">ຊື່ ຫຼື
+                ລະຫັດຜ່ານ
+                ບໍ່ຖືກຕ້ອງ</div>
+            </ng-container>
+          </div>
+          <div class="footer">
+            <div class="register-link">
+              <i class="pi pi-check-square"></i><button class="btn-register" (click)="showRegisterDialog()"
+                type="button"><span>register</span></button>
+            </div>
+            <div class="pbutton-login-layout">
+              <button pButton type="submit" class="btn-login" style="background-color: rgb(40,113,250);">login</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </p-card>
+  </div>
+
+  <!-- register dialog -->
+
+  <p-dialog [(visible)]="display" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width:'30vw'}"
+    [showHeader]="false" [modal]="true" appendTo="body" [contentStyle]="{padding: 0}" (onHide)="registerDialogHide()">
+    <ng-template pTemplate="content">
+      <form class="register-form" [formGroup]="registerForm" autocomplete="off">
+        <div class="register-state">
+          <div style="position: absolute; left: 0; top: 0;" *ngIf="state">
+            <button (click)="backState()">
+              <i class="pi pi-arrow-circle-left" style="font-size: 1.5rem"></i>
+            </button>
+          </div>
+          <div class="register-state-content" [ngClass]="!state ? 'active' : null">
+          </div>
+          <div class="register-state-content" [ngClass]="state ? 'active' : null">
+          </div>
+          <button pButton pRipple type="button" icon="pi pi-times"
+            class="p-button-rounded p-button-danger p-button-text" style="position: 'absolute'; top: 0; right: 0"
+            (click)="closeRegister()"></button>
+        </div>
+        <div class="register-content">
+          <div class="header">ສະໝັກສະມາຊິກ</div>
+          <div class="register-wrapper" [@openClose]="state ? 'open': 'close'">
+            <div class="body" [@hidden]="state && 'hide'">
+              <div class="body-layout"
+                style="display: flex;margin: 1em 0 !important; justify-content: center; flex-direction: column; align-items: center;">
+                <div class="body-wrapper">
+                  <div style="display: flex">
+                    <div class="p-form-layout">
+                      <label for="" class="p-label"
+                        [ngClass]="{'error':rgFirstname.invalid && (rgFirstname.dirty || rgFirstname.touched)}">ຊື່</label>
+                      <input class="p-input" placeholder="" formControlName="firstname"
+                        [ngClass]="{'error':rgFirstname.invalid && (rgFirstname.dirty || rgFirstname.touched)}" />
+                      <ng-container *ngIf="rgFirstname.invalid && (rgFirstname.dirty || rgFirstname.touched)">
+                        <div *ngIf="rgFirstname.errors?.['required']" class="p-input-message">ບໍ່ໃຫ້ວ່າງ</div>
+                        <div *ngIf="rgFirstname.errors?.['stringFailed']" class="p-input-message">ຕົົວອັກສອນຢ່າງດຽວ
+                        </div>
+                      </ng-container>
+                    </div>
+                    <div class="p-form-layout">
+                      <label for="" class="p-label"
+                        [ngClass]="{'error':rgLastname.invalid && (rgLastname.dirty || rgLastname.touched)}">ນາມສະກຸນ</label>
+                      <input class="p-input" placeholder="" formControlName="lastname"
+                        [ngClass]="{'error':rgLastname.invalid && (rgLastname.dirty || rgLastname.touched)}" />
+                      <ng-container *ngIf="rgLastname.invalid && (rgLastname.dirty || rgLastname.touched)">
+                        <div *ngIf="rgLastname.errors?.['required']" class="p-input-message">ບໍ່ໃຫ້ວ່າງ</div>
+                        <div *ngIf="rgLastname.errors?.['stringFailed']" class="p-input-message">ຕົົວອັກສອນຢ່າງດຽວ</div>
+                      </ng-container>
+                    </div>
+                  </div>
+                  <div style="display: flex">
+                    <div class="p-form-layout">
+
+                      <div class="phone" style="position: flex; border: 1px solid #ced4da; border-radius: 3px;"
+                        [ngClass]="{'error':rgPhone.invalid && (rgPhone.dirty || rgPhone.touched)}">
+                        <div style="height: 50px; background-color: #e9ecef; width: 20%; display: inline-flex; align-items: center; justify-content: center
+                        ;border: 0; border-right: 0; font-weight: bold;">+856</div>
+                        <label for="" class="p-label"
+                          [ngClass]="{'error':rgPhone.invalid && (rgPhone.dirty || rgPhone.touched)}"
+                          style="z-index: 500;">ເບີໂທ</label>
+                        <input class="p-input" placeholder="" formControlName="phone" style="width: 80%; border: 0;" />
+                      </div>
+                      <ng-container *ngIf="rgPhone.invalid && (rgPhone.dirty || rgPhone.touched)">
+                        <div *ngIf="rgPhone.errors?.['required']" class="p-input-message">ບໍ່ໃຫ້ວ່າງ</div>
+                        <div *ngIf="rgPhone.errors?.['numberFailed']" class="p-input-message">ຕົວເລກຢ່າງດຽວ</div>
+                        <div *ngIf="rgPhone.errors?.['minNumberFailed']" class="p-input-message">ຕົວເລກ 10 ຕົວ</div>
+                      </ng-container>
+                    </div>
+                    <div class="p-form-layout">
+                      <p-dropdown optionLabel="name" optionValue="code" [options]="gender"
+                        [style]="{'width': '100%', 'marginLeft': 0, 'height': '50px'}" placeholder="ເພດ"
+                        class="prdropdown" [filter]="true" filterBy="name" appendTo="body" formControlName="genderForm">
+                      </p-dropdown>
+                      <ng-container *ngIf="rgGender.invalid && (rgGender.dirty || rgGender.touched)">
+                        <div *ngIf="rgGender.errors?.['required']" class="p-input-message">ບໍ່ໃຫ້ວ່າງ</div>
+                      </ng-container>
+                    </div>
+                  </div>
+                  <div class="navigate">
+                    <div class="navigate-wrapper">
+                      <div style="display: flex;">
+                        <div class="p-form-layout">
+                          <label for="" class="p-label"
+                            [ngClass]="{'error':rgVillage.invalid && (rgVillage.dirty || rgVillage.touched)}">ບ້ານ</label>
+                          <input class="p-input" placeholder="" formControlName="village"
+                            [ngClass]="{'error':rgVillage.invalid && (rgVillage.dirty || rgVillage.touched)}" />
+                          <ng-container *ngIf="rgVillage.invalid && (rgVillage.dirty || rgVillage.touched)">
+                            <div *ngIf="rgVillage.errors?.['required']" class="p-input-message">ບໍ່ໃຫ້ວ່າງ</div>
+                            <div *ngIf="rgVillage.errors?.['stringFailed']" class="p-input-message">ຕົົວອັກສອນຢ່າງດຽວ
+                            </div>
+                          </ng-container>
+                        </div>
+                        <div style="display: flex; flex-direction: column; flex: 1;">
+                          <div class="p-form-layout">
+                            <p-dropdown optionLabel="name" optionValue="code" [options]="district"
+                              [disabled]="district.length === 0" class="prdropdown"
+                              [style]="{'width': '100%', 'marginLeft': 0, 'height': '50px'}" placeholder="ເມືອງ"
+                              [filter]="true" filterBy="name" appendTo="body" formControlName="district">
+                            </p-dropdown>
+                            <ng-container *ngIf="rgDistrict.invalid && (rgDistrict.dirty || rgDistrict.touched)">
+                              <div *ngIf="rgDistrict.errors?.['required']" class="p-input-message">ບໍ່ໃຫ້ວ່າງ</div>
+                            </ng-container>
+                          </div>
+                        </div>
+                      </div>
+                      <div style="display: flex; flex-direction: column;">
+                        <div>
+                          <p-dropdown optionLabel="name" optionValue="code" [options]="province"
+                            [style]="{'width': '100%', 'marginLeft': 0, 'height': '48px'}" class="prdropdown"
+                            placeholder="ແຂວງ" [filter]="true" filterBy="name" appendTo="body"
+                            (onChange)="activeProvince($event)" formControlName="province">
+                          </p-dropdown>
+                          <ng-container *ngIf="rgProvince.invalid && (rgProvince.dirty || rgProvince.touched)">
+                            <div *ngIf="rgProvince.errors?.['required']" class="p-input-message">ບໍ່ໃຫ້ວ່າງ</div>
+                          </ng-container>
+                        </div>
+
+                      </div>
+                    </div>
+                    <div class="navigate-label">ທີ່ຢູ່</div>
+                  </div>
+                  <div style="display: flex">
+                    <div class="p-form-layout">
+                      <label for="" class="p-label"
+                        [ngClass]="{'error':rgUsername.invalid && (rgUsername.dirty || rgUsername.touched)}">ຊື່ຜູ້ໃຊ້</label>
+                      <input class="p-input" placeholder="" formControlName="username"
+                        [ngClass]="{'error':rgUsername.invalid && (rgUsername.dirty || rgUsername.touched)}" />
+                      <ng-container *ngIf="rgUsername.invalid && (rgUsername.dirty || rgUsername.touched)">
+                        <div *ngIf="rgUsername.errors?.['required']" class="p-input-message">ບໍ່ໃຫ້ວ່າງ</div>
+                      </ng-container>
+                    </div>
+                    <div class="p-form-layout">
+                      <label for="" class="p-label"
+                        [ngClass]="{'error':rgPassword.invalid && (rgPassword.dirty || rgPassword.touched)}">ລະຫັດຜ່ານ</label>
+                      <input class="p-input" placeholder="" formControlName="password" type="password"
+                        [ngClass]="{'error':rgPassword.invalid && (rgPassword.dirty || rgPassword.touched)}" />
+                      <ng-container *ngIf="rgPassword.invalid && (rgPassword.dirty || rgPassword.touched)">
+                        <div *ngIf="rgPassword.errors?.['required']" class="p-input-message">ບໍ່ໃຫ້ວ່າງ</div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="body" *ngIf="state">
+              <div style="padding: 5px; display: flex; justify-content: center; align-items: center; height: 100%;">
+                <div style="display: flex; flex-direction: column">
+                  <div style="font-weight: bold; font-size: 1rem; text-align: center;">ຢືນຢັນລະຫັດຜ່ານ sms</div>
+                  <div style="display: flex; padding: 5px;">
+                    <input type="text" class="input-otp" (keyup)="otpKeypress($event, 0)" #otpInput maxlength="1">
+                    <div style="border-bottom: 2px solid black; width: 5px; align-self: center;"></div>
+                    <input type="text" class="input-otp" (keyup)="otpKeypress($event, 1)" #otpInput maxlength="1">
+                    <div style="border-bottom: 2px solid black; width: 5px; align-self: center;"></div>
+                    <input type="text" class="input-otp" (keyup)="otpKeypress($event, 2)" #otpInput maxlength="1">
+                    <div style="border-bottom: 2px solid black; width: 5px; align-self: center;"></div>
+                    <input type="text" class="input-otp" (keyup)="otpKeypress($event, 3)" #otpInput maxlength="1">
+                    <div style="border-bottom: 2px solid black; width: 5px; align-self: center;"></div>
+                    <input type="text" class="input-otp" (keyup)="otpKeypress($event, 4)" #otpInput maxlength="1">
+                    <div style="border-bottom: 2px solid black; width: 5px; align-self: center;"></div>
+                    <input type="text" class="input-otp" (keyup)="otpKeypress($event, 5)" #otpInput maxlength="1">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="line" style="border-bottom: 1px solid rgb(171, 171, 171); margin-bottom: 1rem;"></div>
+      </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <div style="display: flex; justify-content: center">
+        <p-button [label]="state ? 'ສະໝັກ' : 'ຢືນຢັນ'" icon="pi pi-chevron-right" styleClass="p-button"
+          (click)="register()"></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <ngx-spinner size="default" color="#000000" type="ball-spin" bdColor="none">
+  </ngx-spinner>

@@ -1,0 +1,24 @@
+<div id="bill-management">
+  <div class="bill-management-layout">
+    <div class="header" style="border: 0.5px solid rgb(230, 228, 228); background-color: white;">
+      <div class="header-layout p-1" style="margin: 0 16px;">
+        <div class="p-inputgroup" style="width: 25%">
+          <button type="button" pButton pRipple icon="pi pi-search" class="p-button-secondary"></button>
+          <input type="text" pInputText placeholder="ເລກໂຕະ" [ngModel]="tableSearch"
+            (ngModelChange)="tableSearchEvent($event)" id="tableSearch">
+        </div>
+
+      </div>
+    </div>
+    <div classs="body" style="align-items: center; display: flex;">
+      <div class="container-fluid">
+        <ng-template [ngIf]="loading && data.length > 0">
+          <table-box [data]="data"></table-box>
+        </ng-template>
+        <ng-template [ngIf]="loading && data.length === 0">
+          <data-empty message="ບໍ່ພົບຂໍ້ມູນ"></data-empty>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

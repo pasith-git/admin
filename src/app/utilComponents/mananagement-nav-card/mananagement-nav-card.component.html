@@ -1,0 +1,20 @@
+<div class="row">
+  <ng-container *ngFor="let menu of items">
+    <div class="col-12 col-md-2 col-sm-4 col-xs-6">
+      <div class="each-nav-card">
+        <div class="each-nav-card-header">
+          <div class="logo-header">
+            <fa-icon [icon]="menu.iconName" style="font-size: 1.5em"></fa-icon>
+          </div>
+        </div>
+        <div class="each-nav-card-body">
+          {{menu.label}}
+        </div>
+        <div class="each-nav-card-footer">
+          <p-megaMenu [model]="menu.menuList" orientation="vertical">
+        </p-megaMenu>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

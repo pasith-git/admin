@@ -1,0 +1,54 @@
+<ng-container *ngIf="data$ | async; let user">
+
+    <div class="user-layout">
+        <div class="user-child-layout section-left">
+            <div class="image-header">
+                <img src="assets/images/user.png" alt="">
+            </div>
+            <div style="font-size: 1.3rem; font-weight: bold">{{user.username}}</div>
+            <div style="border-bottom:  1px solid rgb(170, 170, 170); width: 100%;"></div>
+            <ul class="user-info-list">
+                <li style="display: flex; justify-content:space-between; padding: 0 5px;">
+                    <div><span style="font-weight: bold;">ຊື່</span>: {{user.firstname}}</div>
+                    <div>{{user.lastname}}</div>
+                </li>
+                <li class="list-role"
+                    style="padding: 5px; box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;">
+                    <div style="text-align: center; padding: 5px; font-weight: bold;">ສະຖານະ (role)</div>
+                    <div class="role-ui" *ngFor="let role of roles"
+                        [ngStyle]="{'background-color': 'rgba('+role.color.r+','+role.color.g+','+role.color.b+',0.5)'}">
+                        {{role.name}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="user-child-layout section-right">
+            <div class="wrapper">
+                <div class="reset-password-section">
+                    <div style="font-weight: bold; font-size: 2rem; margin-bottom: 1rem;">Reset Your Password</div>
+                    <div style="font-size: 1.1rem">ກະລຸນາປ້ອນຂໍ້ມູນໃສ່ໃນຊ່ອງດ້ານລຸ່ມ</div>
+                    <form action="" [formGroup]="rf">
+                        <div style="margin: 1rem 0 5px 0;">
+                            <input type="password" class="rp-input" placeholder="ລະຫັດຜ່ານໃຫມ່"
+                                formControlName="password"
+                                [ngClass]="{'error':password.invalid && (password.dirty || password.touched)}">
+                            <ng-container *ngIf="password.invalid && (password.dirty || password.touched)">
+                                <div *ngIf="password.errors?.['required']" class="p-input-message">ບໍ່ໃຫ້ວ່າງ</div>
+                            </ng-container>
+                        </div>
+                        <div style="margin: 0 0 5px 0;"><input type="password" class="rp-input"
+                                placeholder="ຢືນຢັນລະຫັດຜ່ານ" formControlName="cPassword"
+                                [ngClass]="{'error':rf.errors?.notSame && (cPassword.dirty || cPassword.touched)}">
+                        </div>
+                        <ng-container *ngIf="rf.errors?.notSame && (cPassword.dirty || cPassword.touched)">
+                            <div class="p-input-message">ລະຫັດບໍ່ກົງກັນ</div>
+                        </ng-container>
+                        <button class="rp-btn" (click)="resetPassword()">reset password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</ng-container>

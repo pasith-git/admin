@@ -1,0 +1,37 @@
+<div class="fixed" @calAnimate *ngIf="display">
+    <div class="cal">
+        <div class="cal-layout">
+            <div style="background: rgb(205, 205, 205);">
+                <div class="display">{{calResult | number: '0.1-3'}}</div>
+            </div>
+            <div class="cal-main">
+                <div class="child"><button style="background-color: inherit; width: 100%; height: 100%;"
+                        (click)="getResult()" (window:keyup)="getResultByEvent($event)"><i class="pi pi-backward"></i></button>
+                </div>
+                <div class="child" (click)="calEvent('clear')" (window:keyup)="keyEvent($event)"><span>clear</span></div>
+                <div class="child" (click)="calEvent('del')"><span>del</span>
+                </div>
+
+                <div class="child" (click)="calEvent(7)"><span>7</span></div>
+                <div class="child" (click)="calEvent(8)"><span>8</span></div>
+                <div class="child" (click)="calEvent(9)"><span>9</span></div>
+                <div class="child" (click)="calEvent('/')"><span>/</span></div>
+
+                <div class="child" (click)="calEvent(4)"><span>4</span></div>
+                <div class="child" (click)="calEvent(5)"><span>5</span></div>
+                <div class="child" (click)="calEvent(6)"><span>6</span></div>
+                <div class="child" (click)="calEvent('*')"><span>*</span></div>
+
+                <div class="child" (click)="calEvent(1)"><span>1</span></div>
+                <div class="child" (click)="calEvent(2)"><span>2</span></div>
+                <div class="child" (click)="calEvent(3)"><span>3</span></div>
+                <div class="child" (click)="calEvent('-')"><span>-</span></div>
+
+                <div class="child" (click)="calEvent(0)"><span>0</span></div>
+                <div class="child" (click)="calEvent('.')"><span style="font-weight: bold;">.</span></div>
+                <div class="child" (click)="calEvent('+')"><span>+</span></div>
+                <div class="child icon" (click)="calEvent('=')"><span>=</span></div>
+            </div>
+        </div>
+    </div>
+</div>

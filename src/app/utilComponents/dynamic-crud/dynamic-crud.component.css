@@ -1,0 +1,27 @@
+.col-custom-1 {
+    padding: 0;
+}
+
+:host ::ng-deep .content-left button {
+    margin-top: 5px !important;
+}
+
+:host ::ng-deep table {
+    width: 100%;
+}
+
+.crud-header {
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+    margin-bottom: 0.5em;
+    padding: 5px 0 !important;
+}
+
+.tr-selection:hover {
+    background-color: rgb(235, 235, 235);
+    z-index: 2000;
+}
+
+:host ::ng-deep .p-datatable-table{
+    table-layout: inherit;
+}

@@ -1,0 +1,81 @@
+<dynamic-crud [data$]="data$" [col]="col" [items]="items" (modalShow)="modalDisplay=$event"
+    (dpEdit)="dpEditEvent($event)" (dpRemove)="dpRemoveEvent($event)" [disabled]="disabled"></dynamic-crud>
+
+<pmodal-crud [modalDisplay]="modalDisplay" modalHeaderName="ຂໍ້ມູນຫົວໜ່ວຍ" (modalHide)="onHide($event)"
+    [modalDefault]="true" [clIcon]="icon" clText="ຂໍ້ມູນຫົວໜ່ວຍ">
+    <ng-template #body>
+        <div style="height: 75vh; position: relative; display: flex; align-items: center;">
+            <form [formGroup]="form" style="width: 100%;" #fb (submit)="create()" (keyup.enter)="create()">
+                <div class="form-group row" style="margin: 1em 0 2em 0 !important; justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຊື່</label>
+                    <div class="col-sm-8">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ຊື່ປະເພດສິນຄ້າ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="name" />
+                            <state-input [form]="form" [control]="name" [boxControl]="true">
+                            </state-input>
+                        </div>
+                        <div *ngIf="name.dirty && name.invalid && (name.touched || name.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <stateinput [form]="form" [control]="name" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ"></stateinput>
+                            <state-input [form]="form" [control]="name" errControl="stringFailed"
+                                errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                        </div>
+                    </div>
+                </div>
+               <div style="width: 100%; position: absolute; bottom: 0; display: flex; justify-content: center;">
+
+                    <button pButton pRipple type="button" label="ຢືນຢັນ" class="p-button-info" style="width: 8em;"
+                        type="submit"></button>
+                </div>
+            </form>
+
+        </div>
+    </ng-template>
+</pmodal-crud>
+
+
+<pmodal-crud [modalEditDisplay]="modalEditDisplay" modalHeaderName="ຂໍ້ມູນຫົວໜ່ວຍ" (modalHide)="onHide($event)"
+    [modalDefault]="false" [clIcon]="icon" clText="ຂໍ້ມູນຫົວໜ່ວຍ">
+    <ng-template #body>
+        <div style="height: 75vh; position: relative; display: flex; align-items: center;">
+            <form [formGroup]="form" style="width: 100%;" #fb (submit)="update()" (keyup.enter)="update()">
+                <div class="form-group row" style="margin: 1em 0 2em 0 !important; justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຊື່</label>
+                    <div class="col-sm-8">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ຊື່ປະເພດສິນຄ້າ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="name" />
+                            <state-input [form]="form" [control]="name" [boxControl]="true">
+                            </state-input>
+                        </div>
+                        <div *ngIf="name.dirty && name.invalid && (name.touched || name.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="name" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                            <state-input [form]="form" [control]="name" errControl="stringFailed"
+                                errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="width: 100%; position: absolute; bottom: 0; display: flex; justify-content: center;">
+
+                    <button pButton pRipple type="button" label="ຢືນຢັນ" class="p-button-info" style="width: 8em;"
+                        type="submit"></button>
+                </div>
+            </form>
+
+        </div>
+    </ng-template>
+</pmodal-crud>
+
+<p-confirmDialog header="ຍືນຍັນ" icon="pi pi-exclamation-triangle" #cd>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton label="Yes" (click)="cd.accept()"></button>
+        <button type="button" pButton label="No" (click)="cd.reject()"></button>
+    </ng-template>
+</p-confirmDialog>

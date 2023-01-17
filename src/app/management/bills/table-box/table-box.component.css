@@ -1,0 +1,15 @@
+.table-box-body {
+    position: relative;
+}
+
+.ak{
+    border-radius: 50%;
+    z-index: 9999;
+    position: absolute;
+    right: -15%;
+    top: -25%;
+    padding: 1rem 8px;
+    background-color: #546e85;
+    transform: rotate(30deg);
+    color: white;
+}

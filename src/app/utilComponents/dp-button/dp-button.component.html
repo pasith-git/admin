@@ -1,0 +1,20 @@
+<div class="dp">
+    <div class="dp-btn" (click)="toggleDp()" #dpToggle>
+        <fa-icon [icon]="faCaretDown" style="color: white"></fa-icon>
+
+    </div>
+    <div class="dp-content" [@dropdown] *ngIf="display">
+        <div (click)="dpEdit.emit()">
+            <div class="text">ແກ້ໄຂ</div>
+            <div class="icon faEdit">
+                <fa-icon [icon]="faEdit"></fa-icon>
+            </div>
+        </div>
+        <div class="dp-btn-delete" (click)="dpRemove.emit()">
+            <div class="text">ລົບ</div>
+            <div class="icon faTrash">
+                <fa-icon [icon]="faTrash"></fa-icon>
+            </div>
+        </div>
+    </div>
+</div>

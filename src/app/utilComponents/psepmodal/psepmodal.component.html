@@ -1,0 +1,310 @@
+<p-dialog [(visible)]="visible" [draggable]="false" [style]="{width: '35vw'}" [resizable]="false" [modal]="true"
+    (onHide)="modalHide()" [dismissableMask]="true">
+    <ng-template pTemplate="header">
+        <ng-container *ngIf="sepTotalPay === 0">
+            <div style="font-weight: bold; font-size: 1.3em;">ເລຶອກຊ່ອງທາງການຊຳລະ (ແຍກຈ່າຍ)</div>
+        </ng-container>
+        <ng-container *ngIf="sepTotalPay !== 0">
+            <div style="font-weight: bold; font-size: 1.3em;">ເລຶອກຊ່ອງທາງການຊຳລະ (ແຍກຈ່າຍຕາມລາຍການ)</div>
+        </ng-container>
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="pmodal-content">
+            <div class="payment-selector">
+                <div class="payment-content">
+                    <button (click)="selectedDebit()" [ngClass]="selectDebit ? 'selectedDebit-style' : null">
+                        <fa-icon [icon]="faCreditCard"></fa-icon>
+                    </button>
+                    <div style="text-align: center;">ບັດເຄດິດ</div>
+                </div>
+                <div class="payment-content">
+                    <button (click)="selectedMoney()" [ngClass]="selectMoney ? 'selectedMoney-style' : null">
+                        <fa-icon [icon]="faMoneyBill"></fa-icon>
+                    </button>
+                    <div style="text-align: center;">ເງິນສົດ</div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="select">
+            <ng-container *ngIf="selectMoney">
+                <hr>
+                <div style="text-align: center;">
+                    <div style="display: flex; width: 100%; justify-content: center; margin: auto; position: relative;">
+                        <button style="position: absolute; top: 0; right: 0; padding: 0.5rem;" (click)="calModal()">
+                            <fa-icon [icon]="faCalculator" size="2x"></fa-icon>
+                        </button>
+                        <div style="text-align: center; margin: 5px 0 0 0; width: 37%;" *ngIf="!sepTotalPay">
+                            <p-inputNumber type="number" pInputText placeholder="ຈຳນວນເງິນທີ່ຕ້ອງການຈ່າຍ"
+                                class="inputNumber" [style]="{'width':'100%'}" [(ngModel)]="freeMoneyChangeInput"
+                                (onInput)="freeMoneyChangeInputEvent($event)" inputId="moneyChangeInput" recInput
+                                (status)="focusCha()" autocomplete="off">
+                            </p-inputNumber>
+                        </div>
+                        <div style="text-align: center; margin: 5px 0 0 0; width: 37%; margin-left: 0.5%;"
+                            *ngIf="!sepTotalPay">
+                            <p-inputNumber type="number" pInputText placeholder="ຮັບເງິນ" [(ngModel)]="moneyInput"
+                                class="inputNumber" [style]="{'width':'100%'}" (onInput)="moneyInputEvent($event)"
+                                inputId="moneyInput" recInput (status)="focusRec()" autocomplete="off">
+                            </p-inputNumber>
+                        </div>
+                        <div style="text-align: center; margin: 5px 0 0 0; width: 74%;" *ngIf="sepTotalPay">
+                            <p-inputNumber type="number" pInputText placeholder="ຮັບເງິນ" [(ngModel)]="moneyInput"
+                                class="inputNumber" [style]="{'width':'100%'}" (onInput)="moneyInputEvent($event)"
+                                inputId="moneyInput" recInput (status)="focusRec()" autocomplete="off">
+                            </p-inputNumber>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: center; margin-top: 5px;">
+                        <div style="text-align: center; width: 50%">
+                            <input type="text" pInputText [(ngModel)]="couponInput" style="width: 100%;"
+                                placeholder="ຄູປອງ">
+                        </div>
+                        <button class="ap-code" (click)="findCoupon()">apply code</button>
+                    </div>
+                    <!--  <div class="money-change" style="margin-top: 5px;">
+                        <div style="display: flex; align-items: center;">ຈຳນວນເງິນ</div>
+                        <div style="font-size: 1.2em;">{{(sepTotal || data.total) | number}} ₭</div>
+                    </div>
+                    <div class="money-change" style="margin-top: 5px;">
+                        <div style="display: flex; align-items: center;">ອາກອນ <span
+                                style="font-size: 1.2em;margin-left: 5px;">{{data.tariff}}%</span>
+                        </div>
+                        <div style="font-size: 1.2em;">{{(sepVat || data.moneyVat) | number}} ₭</div>
+                    </div> -->
+                    <div class="money-change" style="margin-top: 5px;">
+                        <div stle="display: flex; align-items: center;">ສ່ວນຫຼຸດ <span
+                                style="font-weight: bold;">({{couponPercent}} %)</span></div>
+                        <div style="font-size: 1.2em; font-weight: bold;">{{couponMoney | number}} ₭</div>
+                    </div>
+                    <div class="money-change" style="margin-top: 5px;">
+                        <div style="display: flex; align-items: center;">ຈຳນວນເງິນທີ່ຕ້ອງຈ່າຍ</div>
+                        <div style="font-size: 1.2em; font-weight: bold;">{{(sepTotalPay || moneySepSelfPay) |
+                            number}} ₭
+                        </div>
+                    </div>
+                    <div class="money-change" style="margin-top: 5px;" *ngIf="!sepTotalPay">
+                        <div style="display: flex; align-items: center;">ຮັບເງິນ</div>
+                        <div style="font-size: 1.2em; font-weight: bold;" *ngIf="moneyInput">{{moneyInput | number}} ₭
+                        </div>
+                        <div style="font-size: 1.2em; font-weight: bold;" *ngIf="!moneyInput">{{0 | number}} ₭</div>
+                    </div>
+                    <!--    <div class="money-change" style="margin-top: 5px;">
+                        <div style="display: flex; align-items: center;">ເງິນຮັບ</div>
+                        <div style="font-size: 1.2em; font-weight: bold;">{{moneyInput | number}} ₭
+                        </div>
+                    </div> -->
+                    <ng-container *ngIf="sepTotalPay">
+                        <ng-container *ngIf="moneyInput > sepTotalPay">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold; color: green;">+ {{moneyChange |
+                                    number}} ₭
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="moneyInput < sepTotalPay && moneyInput !== null">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold; color: red;">- {{moneyChange | number}}
+                                    ₭
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container
+                            *ngIf="(moneyInput > sepTotalPay && moneyInput < sepTotalPay) === false && (moneyInput === sepTotalPay) || moneyInput === null">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold;">{{moneyChange | number}} ₭</div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="!sepTotalPay">
+                        <ng-container
+                            *ngIf="freeMoneyChangeInput < moneyInput || freeMoneyChangeInput === moneyInput && moneyChange > 0">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold; color: green;">+ {{moneyChange |
+                                    number}} ₭
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="freeMoneyChangeInput > moneyInput">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold; color: red;">- {{moneyChange | number}}
+                                    ₭
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container
+                            *ngIf="(freeMoneyChangeInput < moneyInput || freeMoneyChangeInput > moneyInput) === false && moneyChange === 0">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold;">{{moneyChange | number}} ₭</div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <div class="row" style="margin: 10px auto 0 auto !important; width: 75% !important;">
+                        <div class="col-12 col-md-4 col-sm-6" *ngFor="let mp of moneyOptions" style="padding: 0;">
+                            <button class="mp-btn" (click)="moneyPicker(mp.amount)">
+                                {{mp.amount | number}} ₭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="select" style="margin-top: 1em;">
+                    <!-- <button type="button" pButton label="ພິມບິນເກັບເງິນ" style="width: 100%; border-radius: 0;"
+                        class="p-button-success mb-2"
+                        (click)="sepPrintBill.emit({freeMoneyChangeInput, moneyInput})"></button> -->
+                    <button type="button" pButton label="ພິມບິນຊຳລະເງິນ" style="width: 100%; border-radius: 0;"
+                        class="p-button-success mb-2" (click)="sepPrint()"></button>
+                    <button type="button" pButton label="ຢຶນຢັນ" style="width: 100%; border-radius: 0;"
+                        class="p-button-info"
+                        (click)="payByCash({moneyInput, moneyChange, rnBankInput, bankNameInput, freeMoneyChangeInput})"></button>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="selectDebit">
+                <hr>
+                <div style="text-align: center;">
+                    <div style="display: flex; width: 100%; justify-content: center; margin: auto; position: relative;">
+                        <button style="position: absolute; top: 0; right: 0; padding: 0.5rem;" (click)="calModal()">
+                            <fa-icon [icon]="faCalculator" size="2x"></fa-icon>
+                        </button>
+                        <div style="text-align: center; margin: 5px 0 0 0; width: 37%;" *ngIf="!sepTotalPay">
+                            <p-inputNumber type="number" pInputText placeholder="ຈຳນວນເງິນທີ່ຕ້ອງການຈ່າຍ"
+                                class="inputNumber" [style]="{'width':'100%'}" [(ngModel)]="freeMoneyChangeInput"
+                                (onInput)="freeMoneyChangeInputEvent($event)" inputId="moneyChangeInput" recInput
+                                (status)="focusCha()" autocomplete="off">
+                            </p-inputNumber>
+                        </div>
+                        <div style="text-align: center; margin: 5px 0 0 0; width: 37%; margin-left: 0.5%;"
+                            *ngIf="!sepTotalPay">
+                            <p-inputNumber type="number" pInputText placeholder="ຮັບເງິນ" [(ngModel)]="moneyInput"
+                                class="inputNumber" [style]="{'width':'100%'}" (onInput)="moneyInputEvent($event)"
+                                inputId="moneyInput" recInput (status)="focusRec()" autocomplete="off">
+                            </p-inputNumber>
+                        </div>
+                        <div style="text-align: center; margin: 5px 0 0 0; width: 74%;" *ngIf="sepTotalPay">
+                            <p-inputNumber type="number" pInputText placeholder="ຮັບເງິນ" [(ngModel)]="moneyInput"
+                                class="inputNumber" [style]="{'width':'100%'}" (onInput)="moneyInputEvent($event)"
+                                inputId="moneyInput" recInput (status)="focusRec()" autocomplete="off">
+                            </p-inputNumber>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: center; margin-top: 5px;">
+                        <div style="text-align: center; width: 50%">
+                            <input type="text" pInputText [(ngModel)]="couponInput" style="width: 100%;"
+                                placeholder="ຄູປອງ">
+                        </div>
+                        <button class="ap-code" (click)="findCoupon()">apply code</button>
+                    </div>
+                    <div style="display: flex; width: 100%; justify-content: center; margin: auto;">
+                        <div style="text-align: center; margin: 5px 0 0 0; width: 37%;">
+                            <p-inputNumber type="number" pInputText placeholder="ເລກອ້າງອີງ" class="inputNumber"
+                                [style]="{'width':'100%'}" [useGrouping]="false" [(ngModel)]="rnBankInput">
+                            </p-inputNumber>
+                        </div>
+                        <div style="text-align: center; margin: 5px 0 0 0; width: 37%; margin-left: 0.5%;">
+                            <p-dropdown [options]="bankOptions" optionLabel="name" [(ngModel)]="bankNameInput"
+                                [placeholder]="bankOptions.length < 1 ? 'loading' : false">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <!--   <div class="money-change" style="margin-top: 5px;">
+                        <div style="display: flex; align-items: center;">ຈຳນວນເງິນ</div>
+                        <div style="font-size: 1.2em;">{{(sepTotal || data.total) | number}} ₭</div>
+                    </div>
+                    <div class="money-change" style="margin-top: 5px;">
+                        <div style="display: flex; align-items: center;">ອາກອນ <span
+                                style="font-size: 1.2em;margin-left: 5px;">{{data.tariff}}%</span>
+                        </div>
+                        <div style="font-size: 1.2em;">{{(sepVat || data.moneyVat) | number}} ₭</div>
+                    </div> -->
+                    <div class="money-change" style="margin-top: 5px;">
+                        <div stle="display: flex; align-items: center;">ສ່ວນຫຼຸດ <span
+                                style="font-weight: bold;">({{couponPercent}} %)</span></div>
+                        <div style="font-size: 1.2em; font-weight: bold;">{{couponMoney | number}} ₭</div>
+                    </div>
+                    <div class="money-change" style="margin-top: 5px;">
+                        <div style="display: flex; align-items: center;">ຈຳນວນເງິນທີ່ຕ້ອງຈ່າຍ</div>
+                        <div style="font-size: 1.2em; font-weight: bold;">{{(sepTotalPay || moneySepSelfPay) |
+                            number}} ₭
+                        </div>
+                    </div>
+                    <div class="money-change" style="margin-top: 5px;" *ngIf="!sepTotalPay">
+                        <div style="display: flex; align-items: center;">ຮັບເງິນ</div>
+                        <div style="font-size: 1.2em; font-weight: bold;" *ngIf="moneyInput">{{moneyInput | number}} ₭
+                        </div>
+                        <div style="font-size: 1.2em; font-weight: bold;" *ngIf="!moneyInput">{{0 | number}} ₭</div>
+                    </div>
+                    <ng-container *ngIf="sepTotalPay">
+                        <ng-container *ngIf="moneyInput > sepTotalPay">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold; color: green;">+ {{moneyChange |
+                                    number}} ₭
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="moneyInput < sepTotalPay && moneyInput !== null">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold; color: red;">- {{moneyChange | number}}
+                                    ₭
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container
+                            *ngIf="(moneyInput > sepTotalPay && moneyInput < sepTotalPay) === false && moneyInput === sepTotalPay || moneyInput === null">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold;">{{moneyChange | number}} ₭</div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="!sepTotalPay">
+                        <ng-container
+                            *ngIf="freeMoneyChangeInput < moneyInput || freeMoneyChangeInput === moneyInput && moneyChange > 0">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold; color: green;">+ {{moneyChange |
+                                    number}} ₭
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="freeMoneyChangeInput > moneyInput">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold; color: red;">- {{moneyChange | number}}
+                                    ₭
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container
+                            *ngIf="(freeMoneyChangeInput < moneyInput || freeMoneyChangeInput > moneyInput) === false && moneyChange === 0">
+                            <div class="money-change" style="margin-top: 5px;">
+                                <div style="display: flex; align-items: center;">ເງິນທອນ</div>
+                                <div style="font-size: 1.2em; font-weight: bold;">{{moneyChange | number}} ₭</div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <div class="row" style="margin: 10px auto 0 auto !important; width: 75% !important;">
+                        <div class="col-12 col-md-4 col-sm-6" *ngFor="let mp of moneyOptions" style="padding: 0;">
+                            <button class="mp-btn" (click)="moneyPicker(mp.amount)">
+                                {{mp.amount | number}} ₭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="select" style="margin-top: 1em;">
+                    <button type="button" pButton label="ພິມບິນຊຳລະເງິນ" style="width: 100%; border-radius: 0;"
+                        class="p-button-success mb-2" (click)="sepPrint()"></button>
+                    <button type="button" pButton label="ຢຶນຢັນ" style="width: 100%; border-radius: 0;"
+                        class="p-button-info"
+                        (click)="payByCash({moneyInput, moneyChange, rnBankInput, bankNameInput, freeMoneyChangeInput})"></button>
+                </div>
+            </ng-container>
+        </div>
+
+    </ng-template>
+</p-dialog>

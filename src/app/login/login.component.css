@@ -1,0 +1,196 @@
+.pform-layout {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.pform-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.pbutton-login-layout {}
+
+:host ::ng-deep .p-inputtext {
+    height: 3em;
+}
+
+:host ::ng-deep .p-card:hover {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 10px;
+    transition: 0.4s ease;
+}
+
+:host ::ng-deep .ngx-spinner-overlay:hover .p-card {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 10px;
+    transition: 0.4s ease;
+}
+
+:host ::ng-deep .p-card:not(:focus) {
+    box-shadow: 0;
+    transition: 0.4s ease;
+}
+
+.pinput-fixed {
+    width: 16em;
+}
+
+button {
+    background: transparent;
+}
+
+.btn-register {
+    margin-left: 5px;
+}
+
+.btn-register:hover {
+    text-decoration: underline;
+}
+
+.btn-login:hover {
+    transition: 0.5s ease-in-out;
+    background-color: rgb(31, 102, 234) !important;
+}
+
+.footer {
+    display: flex;
+    flex-direction: column;
+}
+
+.register-link {
+    display: flex;
+    align-items: center;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.register-state {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+.register-state-content {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 5px;
+    background-color: black;
+}
+
+.register-state-content.active {
+    background-color: #2871FA;
+}
+
+.register-content {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    overflow: hidden;
+}
+
+.register-wrapper {
+    display: flex;
+}
+
+.register-wrapper .body {
+    min-width: 100%;
+}
+
+.register-content .header {
+    align-self: center;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.p-form-layout {
+    position: relative;
+    margin: 10px 5px;
+    flex: 1 0;
+}
+
+
+
+.p-label {
+    position: absolute;
+    margin: 0 5px;
+    font-size: 1.05em;
+    font-weight: bold;
+    top: 0;
+    transform: translateY(-50%);
+    background-color: white;
+}
+
+.p-label.error {
+    color: #f44336;
+}
+
+.p-input {
+    border: 1px solid #ced4da;
+    padding: 1.5rem 10px;
+    width: 100%;
+    min-width: 100px;
+    border-radius: 3px;
+}
+
+.p-input.error {
+    border: 1px solid #f44336;
+    transition: 200ms linear;
+}
+
+.phone.error {
+    border: 1px solid #f44336 !important;
+    transition: 200ms linear;
+}
+
+.p-input:focus, .p-input:hover, .p-form-layout.pdropdown, .p-form-layout.pdropdown:hover {
+    border-color: #2196F3;
+    transition: 200ms linear;
+}
+
+.p-input.error:focus, .p-input.error:hover {
+    border-color: #f44336;
+    transition: 200ms linear;
+}
+
+.navigate {
+    border: 1px solid #bfc2c5;
+    position: relative;
+    margin: 10px 5px;
+}
+
+.navigate-wrapper {
+    margin: 1rem;
+}
+
+.navigate-label {
+    position: absolute;
+    top: 0;
+    transform: translateY(-50%);
+    background-color: white;
+    color: #9a9a9a;
+    margin: 0 5px;
+}
+
+.p-input-message {
+    color: #f44336;
+    margin: 5px 0;
+}
+
+.input-otp {
+    border: 1px solid black;
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    text-align: center;
+    font-size: 50px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

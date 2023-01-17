@@ -1,0 +1,174 @@
+<dynamic-crud [data$]="data$" [col]="col" [items]="items" (modalShow)="modalDisplay=$event"
+    (dpEdit)="dpEditEvent($event)" (dpRemove)="dpRemoveEvent($event)" [disabled]="disabled"></dynamic-crud>
+
+<pmodal-crud [modalDisplay]="modalDisplay" modalHeaderName="ຂໍ້ມູນສິນຄ້າ" (modalHide)="onHide($event)"
+    [modalDefault]="true" [imagePath]="imagePath" clText="ຂໍ້ມູນສິນຄ້າ">
+    <ng-template #body>
+        <div style="height: 75vh; position: relative; display: flex; align-items: center;">
+            <form [formGroup]="form" style="width: 100%;" #fb (submit)="create()" (keyup.enter)="update()">
+                <div class="form-group row" style="margin: 1em 0 2em 0 !important; justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຊື່</label>
+                    <div class="col-sm-8">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ຊື່"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="name" />
+                            <state-input [form]="form" [control]="name" [boxControl]="true">
+                            </state-input>
+                        </div>
+                        <div *ngIf="name.dirty && name.invalid && (name.touched || name.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="name" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                            <state-input [form]="form" [control]="name" errControl="stringFailed"
+                                errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row" style="justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ປະເພດ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <p-dropdown [options]="productTypeOptions" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="type" placeholder="ເລຶອກປະເພດ" [filter]="true" filterBy="name">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="type.dirty && type.invalid && (type.touched || type.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="type" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                                style="color: #f44336; position: absolute; margin-top: 3px;">
+                                <state-input [form]="form" [control]="placement" errControl="required"
+                                    errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                                <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                    errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                            </div> -->
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຫົວໜ່ວຍ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <p-dropdown [options]="unitOptions" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="unit" placeholder="ເລືອກຫົວໜ່ວຍ" [filter]="true" filterBy="name">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="unit.dirty && unit.invalid && (unit.touched || unit.untouched)"
+                        style="color: #f44336; position: absolute; margin-top: 3px;">
+                        <state-input [form]="form" [control]="unit" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                        </state-input>
+                    </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="placement" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                            <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                        </div> -->
+                    </div>
+                </div>
+
+                <div style="width: 100%; position: absolute; bottom: 0; display: flex; justify-content: center;">
+
+                    <button pButton pRipple type="button" label="ຢືນຢັນ" class="p-button-info" style="width: 8em;"
+                        type="submit"></button>
+                </div>
+            </form>
+
+        </div>
+    </ng-template>
+</pmodal-crud>
+
+
+<pmodal-crud [modalEditDisplay]="modalEditDisplay" modalHeaderName="ຂໍ້ມູນສິນຄ້າ" (modalHide)="onHide($event)"
+    [modalDefault]="false" [imagePath]="imagePath" clText="ຂໍ້ມູນສິນຄ້າ">
+    <ng-template #body>
+        <div style="height: 75vh; position: relative; display: flex; align-items: center;">
+            <form [formGroup]="form" style="width: 100%;" #fb (submit)="update()" (keyup.enter)="update()">
+                <div class="form-group row" style="margin: 1em 0 2em 0 !important; justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຊື່</label>
+                    <div class="col-sm-8">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <input type="text" pInputText placeholder="ຊື່ ຫຼື ເລກໄອພີ"
+                                [ngStyle]="{'padding-right': 'calc(0.5em + 0.5em)'}" formControlName="name" />
+                            <state-input [form]="form" [control]="name" [boxControl]="true">
+                            </state-input>
+                        </div>
+                        <div *ngIf="name.dirty && name.invalid && (name.touched || name.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="name" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                            <state-input [form]="form" [control]="name" errControl="stringFailed"
+                                errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row" style="justify-content: center;">
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ປະເພດ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <p-dropdown [options]="productTypeOptions" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="type" [filter]="true" filterBy="name">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="type.dirty && type.invalid && (type.touched || type.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="type" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                            </state-input>
+                        </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                                style="color: #f44336; position: absolute; margin-top: 3px;">
+                                <state-input [form]="form" [control]="placement" errControl="required"
+                                    errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                                <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                    errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                            </div> -->
+                    </div>
+                    <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg"
+                        style="font-weight: bold;">ຫົວໜ່ວຍ</label>
+                    <div class="col-sm-3">
+                        <div class="p-inputgroup" style="position: relative; height: 100%;">
+                            <p-dropdown [options]="unitOptions" optionLabel="name" optionValue="code"
+                                [style]="{'width': '100%', 'marginLeft': 0, 'height': '100%', 'borderRadius':0}"
+                                formControlName="unit" [filter]="true" filterBy="name">
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="unit.dirty && unit.invalid && (unit.touched || unit.untouched)"
+                        style="color: #f44336; position: absolute; margin-top: 3px;">
+                        <state-input [form]="form" [control]="unit" errControl="required" errMessage="ບໍ່ໃຫ້ວ່າງ">
+                        </state-input>
+                    </div>
+                        <!-- <div *ngIf="placement.dirty && placement.invalid && (placement.touched || placement.untouched)"
+                            style="color: #f44336; position: absolute; margin-top: 3px;">
+                            <state-input [form]="form" [control]="placement" errControl="required"
+                                errMessage="ບໍ່ໃຫ້ວ່າງ"></state-input>
+                            <state-input [form]="form" [control]="placement" errControl="stringFailed"
+                                errMessage="ປ້ອນເປັນຕົວອັກສອນ"></state-input>
+                        </div> -->
+                    </div>
+                </div>
+
+                <div style="width: 100%; position: absolute; bottom: 0; display: flex; justify-content: center;">
+
+                    <button pButton pRipple type="button" label="ຢືນຢັນ" class="p-button-info" style="width: 8em;"
+                        type="submit"></button>
+                </div>
+            </form>
+
+        </div>
+    </ng-template>
+</pmodal-crud>
+
+<p-confirmDialog header="ຍືນຍັນ" icon="pi pi-exclamation-triangle" #cd>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton label="Yes" (click)="cd.accept()"></button>
+        <button type="button" pButton label="No" (click)="cd.reject()"></button>
+    </ng-template>
+</p-confirmDialog>

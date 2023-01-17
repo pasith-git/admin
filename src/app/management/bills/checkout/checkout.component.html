@@ -1,0 +1,231 @@
+<div id="bill-checkout">
+  <div class="container-fluid p-0">
+    <div class="row">
+      <div class="col-12 col-md-9 col-sm-6 col">
+        <div class="content content-left" style="overflow: auto;">
+          <div class="bill-table-data">
+            <p-table [value]="data" [columns]="cols">
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th>ລຳດັບ</th>
+                  <th>ເລກໂຕະ</th>
+                  <th>ເລກບິນ</th>
+                  <th *ngFor="let col of columns">
+                    {{col.header}}
+                  </th>
+                  <th style="width: 10%;">ລວມ / ອາກອນ</th>
+                  <th style="text-align: center; width: 10%;">ຈ່າຍແຍກ / ສະຖານະ</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                <tr *ngFor="let dataDetail of data.orderdetails; let i=index">
+                  <td style="text-align: center; width: 2%;">{{i + 1}}</td>
+                  <td *ngIf="i === 0" [rowSpan]="dataDetail.length" style="font-weight: bold;">
+                    {{data.tableName}}
+                  </td>
+                  <td *ngIf="i === 0" [rowSpan]="dataDetail.length" style="font-weight: bold;">
+                    {{data.billNumber}}
+                  </td>
+                  <td>{{dataDetail.menuName}}</td>
+                  <td>{{dataDetail.amount}}</td>
+                  <td>{{dataDetail.price | number}}</td>
+                  <td>{{dataDetail.total | number}}</td>
+                  <td>{{(dataDetail.total + (data.tariff / 100 * dataDetail.total)) | number}}</td>
+                  <td style="text-align: center;">
+
+                    <p-checkbox [name]="dataDetail.menuName" [value]="dataDetail" [(ngModel)]="dataDetail.read" #cbod
+                      *ngIf="dataDetail.paymentType === 'pending' && dataDetail.total + (data.tariff / 100 * dataDetail.total) <= needPay ">
+                    </p-checkbox>
+                    <i class="pi pi-times-circle" style="color: red;"
+                      *ngIf="dataDetail.paymentType === 'pending' && dataDetail.total + (data.tariff / 100 * dataDetail.total) > needPay"></i>
+                    <div *ngIf="dataDetail.paymentType === 'cash'"
+                      style="
+                    border-radius: 50%; width: fit-content; padding: 0.5em; margin: auto; background-color: #118C4F; color: white;">
+                      ເງິນສົດ
+                    </div>
+                    <div *ngIf="dataDetail.paymentType === 'bank'"
+                      style="
+                    border-radius: 50%; width: fit-content; padding: 0.5em; margin: auto; background-color: #F99D29; color: white;">
+                      bank
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-3 col-sm-6 col" style="position: sticky !important;">
+        <div class="content content-right">
+          <div class="pcard p-card-title" style="font-weight: bold;">
+            Checkout
+          </div>
+          <button pButton pRipple type="button" label="ຈ່າຍລວມ" class="p-button-secondary"
+            style="border-radius: 0; width: 100%; margin-top: 5px;" (click)="payment()" [disabled]="hidden"></button>
+
+          <ng-container>
+            <button pButton pRipple type="button" label="ແຍກຈ່າຍ" class="p-button-secondary"
+              style="border-radius: 0; width: 100%; margin-top: 5px;" (click)="sepPayment()"
+              [disabled]="hidden"></button>
+          </ng-container>
+
+          <ng-container *ngFor="let data of data">
+            <p-modal (calModalEvent)="calModal()" (calModalHide)="calModalHide()"
+              (checkoutDataEvent)="payConfirm($event)" [pmodalData]="pmodalData" (pmodalEvent)="pmodalEvent()">
+            </p-modal>
+            <!--  <p-sepmodal [data]="data" (payResult)="sepPaymentConfirm($event)" [moneyChange]="moneyChange"
+              [couponMoney]="couponMoney" [couponPercent]="couponPercent" (paymentType)="paymentType=$event"
+              [sepTotal]="sepTotal" [sepVat]="sepVat" [sepTotalPay]="sepTotalPay" (findCouponEmit)="findCoupon($event)"
+              (sepModalHide)="selectedData=[]" [defaultSepTotalPay]="sepTotalPay" (sepPrintBill)="sepPrintBill($event)"
+              [needPay]="needPay" (setDefaultCoupon)="setDefaultCoupon()" (calModalEvent)="calModalSep()"
+              (calModalHide)="calModalHide()"></p-sepmodal> -->
+          </ng-container>
+          <div class="pcard p-card-coupon">
+            <div style="padding: 0.7em 0;">
+              <div>
+                <div style="opacity: 0.6; font-weight: bold;">ຮັບເງິນ</div>
+                <div style="border-bottom: 1px dotted rgb(200, 200, 200);"></div>
+              </div>
+              <div>
+                <div style="opacity: 0.6; font-weight: bold;">{{(checkoutData | async).moneyReceive | number}} ₭</div>
+              </div>
+            </div>
+            <div style="padding: 0.7em 0;">
+              <div>
+                <div style="opacity: 0.6; font-weight: bold;">ເງິນທອນ</div>
+                <div style="border-bottom: 1px dotted rgb(200, 200, 200);"></div>
+              </div>
+              <div>
+                <div style="opacity: 0.6; font-weight: bold;">{{(checkoutData | async).moneyChange | number}} ₭</div>
+              </div>
+            </div>
+            <div style="padding: 0.7em 0;">
+              <div>
+                <div style="opacity: 0.6; font-weight: bold;">ສ່ວນຫຼຸດ <span style="font-weight: bold;">
+                    <ng-container *ngIf="couponType === 'discountPercent' || couponType === 'discountCode'">
+                      ({{(checkoutData | async).couponPercent | number}} %)
+                    </ng-container>
+                  </span></div>
+                <div style="border-bottom: 1px dotted rgb(200, 200, 200);"></div>
+              </div>
+              <div>
+                <div style="opacity: 0.6; font-weight: bold;">{{(checkoutData | async).moneyCoupon | number}} ₭</div>
+              </div>
+            </div>
+            <div class="pcard p-card-bank" style="background-color: #f8f8f8d3; flex-direction: column;">
+              <div
+                style="padding: 0.7em; width: 100%; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <div style="opacity: 0.6; font-weight: bold;">ຊື່ທະນາຄານ</div>
+                  <div style="border-bottom: 1px dotted rgb(200, 200, 200);"></div>
+                </div>
+                <div>
+                  <div style="opacity: 0.6; font-weight: bold;">{{(calData$ | async)?.calc?.bank.name.value ? (calData$
+                    | async).calc.bank.name.value : "ວ່າງ"}}</div>
+                </div>
+              </div>
+              <div
+                style="padding: 0.7em; width: 100%; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <div style="opacity: 0.6; font-weight: bold;">ເລກອ້າງອີງ</div>
+                  <div style="border-bottom: 1px dotted rgb(200, 200, 200);"></div>
+                </div>
+                <div>
+                  <div style="opacity: 0.6; font-weight: bold;">{{(calData$ | async)?.calc?.bank.ref ? (calData$ |
+                    async).calc.bank.ref : "ວ່າງ"}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pcard p-card-final">
+            <div [ngClass]="'plist p-card'" style="display: flex; margin: 0;">
+              <div style="display: flex; justify-content: space-between; width: 50%; padding: 0.7em;">
+                <div>ມູນຄ່າອາກອນ ({{dataVAT}}%)</div>
+                <div>{{vat | number}} ₭</div>
+              </div>
+              <div style="display: flex; justify-content: space-between; width: 50%; padding: 0.7em;">
+                <div>ລວມເງິນ / ອາກອນ</div>
+                <div *ngIf="totalVat">{{totalVat | number}} ₭</div>
+                <div *ngIf="totalVat === 0">{{total | number}} ₭</div>
+              </div>
+            </div>
+            <div [ngClass]="'plist p-card'" style="display: flex; margin: 0;">
+              <div style="display: flex; justify-content: space-between; width: 50%; padding: 0.7em;">
+                <div>ລວມເງິນ</div>
+                <div>{{total | number}} ₭</div>
+              </div>
+              <div style="display: flex; justify-content: space-between; width: 50%; padding: 0.7em;">
+                <div style="font-weight: bold;">ເງິນຍັງເຫຼືອ</div>
+                <div style="font-weight: bold;">{{needPay | number}} ₭</div>
+              </div>
+            </div>
+            <div [ngClass]="'plist p-card'" style="display: flex; margin: 0;">
+              <div style="display: flex; justify-content: space-between; width: 50%; padding: 0.7em;">
+                <div style="color: rgb(27, 165, 0);">ຈ່າຍແລ້ວ</div>
+                <div style="color: rgb(96, 124, 90);">{{paidMoney | number}} ₭</div>
+              </div>
+
+            </div>
+          </div>
+          <div class="pcard p-card-currency" style="margin-top: 5px;">
+            <div style="display: flex; justify-content: space-between; margin: 5px;" *ngFor="let cm of currencyM">
+              <div>{{cm.name}} ({{cm.rate | number : '.2-2'}}₭)</div>
+              <div>{{cm.value | number : '.2-2'}} {{cm.code}}</div>
+            </div>
+          </div>
+          <div class="p-card-btn-first">
+            <button pButton pRipple type="button" label="ພິມບິນເກັບເງິນ" class="p-button-secondary" [disabled]="hidden"
+              (click)="payBillgetMoney()" ngxPrint [useExistingCss]="true"
+              printSectionId="bill-getMoney-print"></button>
+            <div *ngIf="(checkoutData$ | async).moneyReceive; then truePrint else falsePrint"></div>
+            <ng-template #truePrint>
+              <button pButton pRipple type="button" label="ພິມບິນຊຳລະເງິນ" class="p-button-secondary"
+                style="margin-left: 1%; max-width: 49%;" [disabled]="hidden" ngxPrint
+                printSectionId="bill-payment-print" [useExistingCss]="true" (click)="payBillPayment()"></button>
+            </ng-template>
+            <ng-template #falsePrint>
+              <button pButton pRipple type="button" label="ພິມບິນຊຳລະເງິນ" class="p-button-secondary"
+                style="margin-left: 1%; max-width: 49%;" [disabled]="hidden" (click)="payBillPaymentF()"></button>
+            </ng-template>
+
+          </div>
+          <div class="p-card-btn-second">
+            <button pButton pRipple type="button" label="ຊຳລະ" class="btn-third" [disabled]="hidden"
+              (click)="orderPayment()"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-confirmDialog header="ຍືນຍັນ" icon="pi pi-exclamation-triangle" #cd [style]="{width: '15vw'}">
+  <ng-template pTemplate="footer">
+    <button type="button" pButton label="Yes" (click)="cd.accept()"></button>
+    <button type="button" pButton label="No" (click)="cd.reject()"></button>
+  </ng-template>
+</p-confirmDialog>
+
+<!-- <bill-for-print [data]="data" billHeader="ໃບບິນເກັບເງິນ" [showBillmoney]="true" [hidden]="true"
+  billId="bill-getMoney-print" [todayDate]="todayDate" [todayTime]="todayTime"></bill-for-print> -->
+<!-- <bill-for-print [data]="data" billHeader="ໃບບິນຊຳລະເງິນ" [showBillpayment]="true" [hidden]="true"
+  billId="bill-payment-print" [moneyR]="moneyReceive" [moneyC]="moneyChange" [todayDate]="todayDate"
+  [billTotal]="billTotal" [todayTime]="todayTime" [couponMoney]="couponMoneyDisplay"
+  [couponPercent]="couponPercentDisplay"></bill-for-print> -->
+
+<!-- <bill-for-print [sepData]="spBill$" billHeader="ໃບບິນຊຳລະເງິນ" billStatus="sepBillPayment" [hidden]="true"
+  billId="sep-bill-payment-print" [moneyR]="moneyReceive" [moneyC]="moneyChange" [todayDate]="todayDate"
+  [todayTime]="todayTime" [data]="data" [couponMoney]="couponMoney" [couponPercent]="couponPercent">
+</bill-for-print>
+
+<bill-for-print [sepData]="spBill$" billHeader="ໃບບິນຊຳລະເງິນ" billStatus="sepBillPaymentWithMenu" [hidden]="true"
+  billId="sep-bill-menu-payment-print" [moneyR]="moneyReceive" [moneyC]="moneyChange" [todayDate]="todayDate"
+  [todayTime]="todayTime" [data]="data" [sepBillData]="sepBillData" [couponMoney]="couponMoney"
+  [couponPercent]="couponPercent" [sepTotalPay]="sepTotalPay - couponMoney!"></bill-for-print> -->
+
+<p-calculator [display]="calDisplay" (calValue)="getResultFromCal($event)" #calChild1></p-calculator>
+<p-calculator [display]="calDisplaySep" (calValue)="getResultFromCal($event)" #calChild2></p-calculator>
+
+<ng-container>
+  <app-generate-bill [hidden]="true" [pmodalData]="pmodalData" [sepBillData]="sepBillData"></app-generate-bill>
+</ng-container>

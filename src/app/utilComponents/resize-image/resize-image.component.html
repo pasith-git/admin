@@ -1,0 +1,13 @@
+<div class="resize-image" *ngIf="display" [@dumbParent]>
+    <div class="wrapper" [@animate]>
+        <div class="image-layout">
+            <div class="header">
+                <button pButton pRipple type="button" icon="pi pi-times"
+                    class="p-button-rounded p-button-danger p-button-text" (click)="closed()"></button>
+            </div>
+            <div class="body">
+                <img [src]="urlImage" />
+            </div>
+        </div>
+    </div>
+</div>

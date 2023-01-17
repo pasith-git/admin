@@ -1,0 +1,17 @@
+input {
+    border-radius: 0 !important;
+}
+
+form>h5 {
+    margin: 8px 0;
+}
+
+
+.p-inputtext.ng-dirty.ng-valid {
+    border-color: green;
+}
+
+:host ::ng-deep .p-dropdown-label{
+    display: flex;
+    align-items: center;
+}

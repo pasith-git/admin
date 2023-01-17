@@ -1,0 +1,46 @@
+<div class="main-nav">
+  <ul class="nav-menu">
+    <div class="nav-section nav-left">
+      <div class="nav-logo">
+        <a routerLink="/" style="height: 100%; display: flex; align-items: center;">
+          <div class="logo-wrapper" style="border: 1px solid rgb(168, 168, 168); width: 100%; height: 80%">
+            <img src="assets/images/rms.png" alt="" style="width: 100%; height: 100%; padding: 5px;">
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="nav-section nav-right">
+      <li *ngFor="let route of routeLinks" class="nav-link-layout">
+        <ng-container *ngIf="!route.row">
+          <a class="nav-link" routerLink="{{route.link}}" routerLinkActive #ra="routerLinkActive"
+            [ngClass]="ra.isActive ? 'nav-active-link' : null" [routerLinkActiveOptions]="{ exact: true }">
+            <div class="nav-text">{{route.name}}
+            </div>
+          </a>
+        </ng-container>
+        <ng-container *ngIf="route.row">
+          <button class="nav-link">
+            <div class="nav-text">{{route.name}}
+            </div>
+          </button>
+          <div class="nav-childs-layout">
+            <div class="nav-childs-fixed">
+      <li *ngFor="let child of route.childs" class="nav-child">
+        <a [routerLink]="child.link">
+          <div class="nav-child-text">
+            {{child.name}}
+          </div>
+        </a>
+      </li>
+    </div>
+</div>
+</ng-container>
+</li>
+<div class="logout-button-layout">
+  <button style="height: 100%; background-color: white; width: inherit;" (click)="logout()">
+    ອອກຈາກລະບົບ
+  </button>
+</div>
+</div>
+</ul>
+</div>

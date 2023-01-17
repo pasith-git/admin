@@ -1,0 +1,361 @@
+<ng-container *ngIf="resourceData$ | async as data">
+    <div id="bill-getMoney"
+        style="width: 100vw; height: 100vh;display: flex; justify-content: center; align-items: center;">
+        <div>
+            <div>
+            </div>
+            <div style="width: 410px;" id="bill-getMoney-print">
+                <div class="bg-body">
+                    <div>
+                        <img src="https://rmstest.jlsipos.com/images/{{data.branch?.logo}}" alt=""
+                            style="padding: 5px;">
+                    </div>
+                    <div
+                        style="font-weight: bold; text-align: center; margin-bottom: 5px; font-family: Boon Baan; font-size: 1.2em;">
+                        {{data.branch?.name}}
+                    </div>
+                    <div
+                        style="font-weight: bold; text-align: center; margin-top: -8px; margin-bottom: 1em;  font-family: Boon Baan; font-size: 1.1em;">
+                        ໃບບິນເກັບເງິນ
+                    </div>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td colspan="2">ເຈົ້າຂອງຮ້ານ {{data.resources?.ownerName}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">ເລກຜູ້ເສຍອາກອນ: {{data.branch?.vatNumber}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%;">ທີ່ຢູ່: {{data.branch?.address[0]}}, {{data.branch?.address[1]}}
+                            </td>
+                            <td style="text-align:right;">ເບີໂທ: {{data.branch?.phone}}</td>
+                        </tr>
+                        <tr>
+                            <td> {{data.branch?.address[2]}}</td>
+                            <td style="text-align:right;">ວັນທີ: {{data.time?.todayDate}}</td>
+                        </tr>
+                        <tr>
+                            <td>ເລກບິນ: {{data.order?.billNumber}}</td>
+                            <td style="text-align:right;">ເວລາ: {{data.time?.todayTime}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>ພິມບິນໂດຍ: {{data.resources?.username}}</td>
+                            <td style="font-weight: bold; text-align: right; font-size: 1.5rem;">ເບີໂຕະ:
+                                {{data.order?.tableName}}
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="border-bottom: 1px solid black; margin: 8px 0;"></div>
+                    <table style="width: 100%; font-size: 85%;">
+                        <tr>
+                            <th style="text-align: center;">ລ.ດ</th>
+                            <th>ລາຍການ</th>
+                            <th style="text-align: center; padding: 0 3px;">ຈ.ນ</th>
+                            <th style="text-align: center; padding: 0 3px;">ລາຄາ</th>
+                            <th style="text-align: center; padding: 0 3px;">ລວມ</th>
+                        </tr>
+                        <ng-container *ngFor="let od of data.order?.orderdetails; let i = index">
+                            <tr>
+                                <td style="text-align: center; width: 1%;">{{i + 1}}</td>
+                                <td style="padding: 0 5px; width: 80%;">{{od.menuName}}</td>
+                                <td style="text-align: center; padding: 0 3px; width: 2%;">{{od.amount}}</td>
+                                <td style="text-align: center; padding: 0 3px; width: 8%; text-align: right;">{{od.price
+                                    | number}}</td>
+                                <td style="text-align: center; padding: 0 3px; width: 8%; text-align: right;"
+                                    *ngIf="checkoutService.data.payment.vat === 'restaurant'">
+                                    {{(od.price * od.amount) | number}}
+                                </td>
+                                <td style="text-align: center; padding: 0 3px; width: 8%; text-align: right;"
+                                    *ngIf="checkoutService.data.payment.vat === 'customer'">
+                                    {{(od.price * od.amount + ((od.price * od.amount) * data.order?.tariff / 100)) |
+                                    number}}
+                                </td>
+                                <td style="text-align: center; padding: 0 3px; width: 8%; text-align: right;"
+                                    *ngIf="checkoutService.data.payment.vat === null">
+                                    {{od.price * od.amount |
+                                    number}}
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                    <div style="border-bottom: 1px solid black; margin: 8px 0;"></div>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="text-align: right; width: 60%;">ອໍເດີ້ທັງໝົດ(Orders):</td>
+                            <td style="text-align: right;">{{data.order?.orderdetails?.length}} ອໍເດີ້</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right; width: 50%;">ລວມເປັນເງິນ(Total):</td>
+                            <td style="text-align: right;;">{{data.order?.total | number}} ₭</td>
+                        </tr>
+                        <!-- restaurant vat-->
+                        <ng-container *ngIf="checkoutService.data.payment.vat === 'restaurant'">
+                            <tr *ngIf="checkoutService.data.payment.vat === 'restaurant'">
+                                <td style="text-align: right; width: 50%;">ລວມເງິນທັງໝົດ(Grand Total):</td>
+                                <td style="text-align: right;;">{{data.order?.total | number}} ₭</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: right; width: 50%;">Baht({{data.order?.moneyTHB}}₭/THB):</td>
+                                <td style="text-align: right;;">{{(data.order?.total / data.order?.moneyTHB) | number :
+                                    '.2-2'}} ₭
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: right; width: 50%;">USD({{data.order?.moneyUSD}}₭/USD):</td>
+                                <td style="text-align: right;;">{{(data.order?.total / data.order?.moneyUSD) | number :
+                                    '.2-2'}} ₭</td>
+                            </tr>
+                        </ng-container>
+
+                        <!-- customer vat -->
+                        <ng-container *ngIf="checkoutService.data.payment.vat === 'customer'">
+                            <tr>
+                                <td style="text-align: right; width: 50%;">ມູນຄ່າ ອ.ມ.ພ(VAT) {{data.order?.tariff}} %
+                                </td>
+                                <td style="text-align: right;">{{data.order?.moneyVat | number}} ₭</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: right; width: 50%;">ລວມເງິນທັງໝົດ(Grand Total):</td>
+                                <td style="text-align: right;;">{{checkoutData.total | number}} ₭</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: right; width: 50%;">Baht({{data.order?.moneyTHB}}₭/THB):</td>
+                                <td style="text-align: right;;">{{(data.order?.totalVat / data.order?.moneyTHB) | number
+                                    :
+                                    '.2-2'}} ₭
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: right; width: 50%;">USD({{data.order?.moneyUSD}}₭/USD):</td>
+                                <td style="text-align: right;;">{{(data.order?.totalVat / data.order?.moneyUSD) | number
+                                    :
+                                    '.2-2'}} ₭</td>
+                            </tr>
+                        </ng-container>
+                    </table>
+
+
+                    <div style="border-bottom: 0.1px solid black; margin: 8px 0;"></div>
+                    <!-- image-->
+                    <div style="width: 100%; text-align: center;">
+                        <img [src]="image" alt="" width="200" height="200">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ng-container>
+
+<ng-container *ngIf="resourceData$ | async as data">
+    <div id="bill-getMoney"
+        style="width: 100vw; height: 100vh;display: flex; justify-content: center; align-items: center;">
+        <div>
+            <div>
+            </div>
+            <div style="width: 410px;" id="bill-payment-print">
+                <div class="bg-body">
+                    <div>
+                        <img src="https://rmstest.jlsipos.com/images/{{data.branch?.logo}}" alt=""
+                            style="padding: 5px;">
+                    </div>
+                    <div
+                        style="font-weight: bold; text-align: center; margin-bottom: 5px; font-family: Boon Baan; font-size: 1.2em;">
+                        {{data.branch?.name}}
+                    </div>
+                    <div
+                        style="font-weight: bold; text-align: center; margin-top: -8px; margin-bottom: 1em;  font-family: Boon Baan; font-size: 1.1em;">
+                        ໃບບິນຊຳລະເງິນ
+                    </div>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td colspan="2">ເຈົ້າຂອງຮ້ານ {{data.resources?.ownerName}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">ເລກຜູ້ເສຍອາກອນ: {{data.branch?.vatNumber}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%;">ທີ່ຢູ່: {{data.branch?.address[0]}}, {{data.branch?.address[1]}}
+                            </td>
+                            <td style="text-align:right;">ເບີໂທ: {{data.branch?.phone}}</td>
+                        </tr>
+                        <tr>
+                            <td> {{data.branch?.address[2]}}</td>
+                            <td style="text-align:right;">ວັນທີ: {{data.time?.todayDate}}</td>
+                        </tr>
+                        <tr>
+                            <td>ເລກບິນ: {{data.order?.billNumber}}</td>
+                            <td style="text-align:right;">ເວລາ: {{data.time?.todayTime}}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>ພິມບິນໂດຍ: {{data.resources?.username}}</td>
+                            <td style="font-weight: bold; text-align: right; font-size: 1.5rem;">ເບີໂຕະ:
+                                {{data.order?.tableName}}
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- normal order list -->
+                    <ng-container *ngIf="pmodalData.type ==='normal'">
+                        <div style="border-bottom: 1px solid black; margin: 8px 0;"></div>
+                        <table style="width: 100%; font-size: 85%;">
+                            <tr>
+                                <th style="text-align: center;">ລ.ດ</th>
+                                <th>ລາຍການ</th>
+                                <th style="text-align: center; padding: 0 3px;">ຈ.ນ</th>
+                                <th style="text-align: center; padding: 0 3px;">ລາຄາ</th>
+                                <th style="text-align: center; padding: 0 3px;">ລວມ</th>
+                            </tr>
+                            <ng-container *ngFor="let od of data.order?.orderdetails; let i = index">
+                                <tr>
+                                    <td style="text-align: center; width: 1%;">{{i + 1}}</td>
+                                    <td style="padding: 0 5px; width: 80%;">{{od.menuName}}</td>
+                                    <td style="text-align: center; padding: 0 3px; width: 2%;">{{od.amount}}</td>
+                                    <td style="text-align: center; padding: 0 3px; width: 8%; text-align: right;">
+                                        {{od.price
+                                        | number}}</td>
+                                    <td style="text-align: center; padding: 0 3px; width: 8%; text-align: right;"
+                                        *ngIf="checkoutService.data.payment.vat === 'restaurant' || checkoutService.data.payment.vat === null ">
+                                        {{(od.price * od.amount) | number}}
+                                    </td>
+                                    <td style="text-align: center; padding: 0 3px; width: 8%; text-align: right;"
+                                        *ngIf="checkoutService.data.payment.vat === 'customer'">
+                                        {{(od.price * od.amount + ((od.price * od.amount) * data.order?.tariff / 100)) |
+                                        number}}
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </ng-container>
+
+                    <!-- filter order list -->
+
+                    <ng-container *ngIf="pmodalData.statusSep ==='sepOrder'">
+                        <div style="border-bottom: 1px solid black; margin: 8px 0;"></div>
+                        <table style="width: 100%; font-size: 85%;">
+                            <tr>
+                                <th style="text-align: center;">ລ.ດ</th>
+                                <th>ລາຍການ</th>
+                                <th style="text-align: center; padding: 0 3px;">ຈ.ນ</th>
+                                <th style="text-align: center; padding: 0 3px;">ລາຄາ</th>
+                                <th style="text-align: center; padding: 0 3px;">ລວມ</th>
+                            </tr>
+                            <ng-container *ngFor="let sbd of sepBillData; let i = index">
+                                <tr>
+                                    <td style="text-align: center; width: 1%;">{{i + 1}}.</td>
+                                    <td style="padding: 0 5px; width: 80%;">{{sbd.menuName}}</td>
+                                    <td style="text-align: center; padding: 0 3px; width: 2%;">{{sbd.amount}}</td>
+                                    <td style="text-align: center; padding: 0 3px; width: 8%; text-align: right;">
+                                        {{sbd.price | number}}₭
+                                    </td>
+                                    <ng-container
+                                        *ngIf="checkoutService.data.payment.vat === 'restaurant' || checkoutService.data.payment.vat === null">
+                                        <td style="text-align: center; padding: 0 3px; width: 8%; text-decoration: line-through;text-align: right;"
+                                            *ngIf="sbd.cb">
+                                            {{sbd.total | number}}₭
+                                        </td>
+                                        <td style="text-align: center; padding: 0 3px; width: 8%; text-align: right;"
+                                            *ngIf="!sbd.cb">
+                                            {{sbd.total | number}}₭
+                                        </td>
+                                    </ng-container>
+
+                                    <ng-container *ngIf="checkoutService.data.payment.vat === 'customer'">
+                                        <td style="text-align: center; padding: 0 3px; width: 8%; text-decoration: line-through;text-align: right;"
+                                            *ngIf="sbd.cb">
+                                            {{(sbd.total + (sbd.total * data.order?.tariff / 100)) | number}}₭
+                                        </td>
+                                        <td style="text-align: center; padding: 0 3px; width: 8%; text-align: right;"
+                                            *ngIf="!sbd.cb">
+                                            {{(sbd.total + (sbd.total * data.order?.tariff / 100)) | number}}₭
+                                        </td>
+                                    </ng-container>
+
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </ng-container>
+
+
+                    <div style="border-bottom: 1px solid black; margin: 8px 0;"></div>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="text-align: right; width: 60%;">ອໍເດີ້ທັງໝົດ(Orders):</td>
+                            <td style="text-align: right;">{{data.order?.orderdetails?.length}} ອໍເດີ້</td>
+                        </tr>
+                        <!-- customer vat -->
+                        <tr *ngIf="pmodalData.type === 'normal'">
+                            <td style="text-align: right; width: 50%;">ລວມເປັນເງິນ(Total):</td>
+                            <td style="text-align: right;;">{{data.order?.total | number}} ₭</td>
+                        </tr>
+                        <tr *ngIf="checkoutService.data.payment.vat === 'customer'">
+                            <td style="text-align: right; width: 50%;">ມູນຄ່າ ອ.ມ.ພ(VAT) {{data.order?.tariff}} %</td>
+                            <td style="text-align: right;">{{data.order?.moneyVat | number}} ₭</td>
+                        </tr>
+                        <tr *ngIf="checkoutService.data.payment.vat === 'customer' && pmodalData.type ==='normal'">
+                            <td style="text-align: right; width: 50%;">ລວມເງິນທັງໝົດ(Grand Total):</td>
+                            <td style="text-align: right;;">{{data.order?.totalVat | number}} ₭</td>
+                        </tr>
+                        <tr *ngIf="data.order?.moneyUpfrontPay">
+                            <td style="text-align: right; width: 50%;">ຍັງເຫືຼອ:</td>
+                            <td style="text-align: right;">{{data.order?.moneyBalance | number}} ₭</td>
+                        </tr>
+                        <tr *ngIf="checkoutService.data.payment.vat === 'restaurant' && pmodalData.type ==='normal'">
+                            <td style="text-align: right; width: 50%;">ລວມເງິນທັງໝົດ(Grand Total):</td>
+                            <td style="text-align: right;;">{{data.order?.total | number}} ₭</td>
+                        </tr>
+                        <ng-container *ngIf="pmodalData.type === 'sep'">
+                            <tr>
+                                <td style="text-align: right; width: 50%; font-weight: bold;">ເງິນທີ່ຕ້ອງການຈ່າຍ:
+                                </td>
+                                <td style="text-align: right; font-weight: bold;">{{checkoutService.data.total |
+                                    number}} ₭</td>
+                            </tr>
+                        </ng-container>
+
+                        <tr>
+                            <td style="text-align: right; width: 50%;">Baht({{data.order?.moneyTHB}}₭/THB):</td>
+                            <td style="text-align: right;;">{{(checkoutService.data.total / data.order?.moneyTHB) |
+                                number :
+                                '.2-2'}} ₭
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right; width: 50%;">USD({{data.order?.moneyUSD}}₭/USD):</td>
+                            <td style="text-align: right;;">{{(checkoutService.data.total / data.order?.moneyUSD) |
+                                number :
+                                '.2-2'}} ₭</td>
+                        </tr>
+                    </table>
+
+                    <div style="border-bottom: 1px solid black; margin: 8px 0;"></div>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="text-align: right; width: 50%;">ຮັບເງິນສົດ (cash):</td>
+                            <td style="text-align: right;">{{checkoutService.data.moneyReceive | number}} ₭</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right; width: 50%;">ເງິນທອນ:</td>
+                            <td style="text-align: right;;">{{checkoutService.data.moneyChange | number}} ₭</td>
+                        </tr>
+                    </table>
+                    <div style="border-bottom: 1px solid black; margin: 8px 0;"></div>
+                    <div class="text-ty" style="font-size: 0.9em; text-align: center; font-family: Boon Baan;">
+                        ຂອບໃຈ
+                        -
+                        Thank you</div>
+                    <div style="border-bottom: 0.1px solid black; margin: 8px 0;"></div>
+                    <table style="width: 100%; font-size: 85%;">
+                        <tr>
+                            <td style="width: 50%;">ໃບອານຸຍາດເລກທີ {{data.branch?.licenseNo}}</td>
+                            <td style="text-align: right;">ລົງວັນທີີີ {{data.branch?.dated}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ng-container>

@@ -1,0 +1,21 @@
+<div id="wrapper">
+  <div class="main-header">
+    <app-header></app-header>
+  </div>
+  <div class="main-content-fixed">
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  <div class="main-footer">
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div style="position: relative;">
+  <div style="position: relative; left: 50%;">
+    <ngx-spinner size="default" color="#000000" type="ball-spin">
+    </ngx-spinner>
+  </div>
+</div>
+<app-package-block></app-package-block>

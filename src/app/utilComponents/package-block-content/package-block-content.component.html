@@ -1,0 +1,54 @@
+<div class="pb-layout">
+    <div class="pb-content-layout">
+        <div class="pb-content" @animate>
+            <button pButton pRipple type="button" icon="pi pi-times"
+                class="p-button-rounded p-button-danger p-button-text" style="position: 'absolute'; top: 0; right: 0"
+                (click)="close()" appOutClick (keyOutClick)="close()"></button>
+            <div class="pb-header">ຊຳລະແພັກເກັດ</div>
+            <div class="pb-c-content" *ngIf="paymentStatus === 'gen'">
+                <ng-container *ngIf="data$ | async as data">
+                    <div *ngFor="let d of data; let i = index" class="pb-each-layout">
+                        <div class="pb-each-content" [ngClass]="d.name === 'Basic' ? 'basic': 'pro'">
+                            <div class="header">
+                                <div class="content">{{d.name}}</div>
+                                <div *ngIf="d.userAmount === null" class="user">ບໍ່ຈຳກັດ Users</div>
+                                <div *ngIf="d.userAmount !== null" class="user">{{d.userAmount}} Users</div>
+                            </div>
+                            <div class="body">
+                                <div class="detail">
+                                    <ul class="list">
+                                        <li *ngFor="let detail of d.PackageDetails; let i = index">
+                                            <button class="pb-btn"
+                                                [ngClass]="i + 1 !== d.PackageDetails.length ? 'underline' : null"
+                                                (click)="packagePayment({packageDetailId: detail.id, packageId: detail.packageId})">
+                                                <div>{{detail.amountDay}} ວັນ</div>
+                                                <div>{{detail.price | number}} ₭</div>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="qr-content" *ngIf="paymentStatus === 'pay'">
+                <div class="body">
+                        <img [src]="qrData.qrCode" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-confirmDialog header="ຍືນຍັນ" icon="pi pi-exclamation-triangle" #cd [baseZIndex]="999999" class="pb"
+    [style]="{width: '250px'}">
+    <ng-template pTemplate="footer">
+        <div style="width: 100%;">
+            <p-dropdown [options]="dropData" [(ngModel)]="brchId" optionLabel="name" optionValue="value" [filter]="true"
+                filterBy="name" placeholder="ເລືອກສາຂາ"></p-dropdown>
+        </div>
+        <button type="button" pButton label="ຍືນຍັນ" (click)="checkPayment()"></button>
+        <button type="button" pButton label="ຍົກເລີກ" (click)="cd.reject()"></button>
+    </ng-template>
+</p-confirmDialog>

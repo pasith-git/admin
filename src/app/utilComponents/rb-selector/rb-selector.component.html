@@ -1,0 +1,19 @@
+<div class="rb-selector row mt-3">
+  <div class="rb-left col-12 col-md-2 col-sm-6">
+    <div class="rb-content">
+      {{resName}}
+    </div>
+  </div>
+  <div class="rb-right col-12 col-md-10 col-sm-6">
+    <div class="rb-content">
+      <div class="rb-header">
+        ເລືອກສາຂາ
+      </div>
+      <div class="rb-body">
+        <div class="" *ngFor="let d of data">
+          <menu-list [rbid]="d.id" [rbname]="d.name" (modalEvent)="modalEvent($event)"></menu-list>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

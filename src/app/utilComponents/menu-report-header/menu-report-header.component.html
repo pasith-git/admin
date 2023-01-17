@@ -1,0 +1,19 @@
+<div class="menu-header-report">
+  <div class="menu-header-list" *ngFor="let menu of menuList">
+    <a class="menu-header-link" routerLink="{{menu.link}}" routerLinkActive="active-link"
+      #routerLink="routerLinkActive">
+      <div class="menu-header-text" [ngClass]="routerLink.isActive ? 'menu-list-active-link' : null">
+        <ng-container *ngIf="menu.name === 'ຮັບສິນຄ້າເຂົ້າ'">
+          <span>{{menu.name}} <i class="pi pi-caret-down" style="color: rgb(0, 199, 0)"></i></span>
+        </ng-container>
+        <ng-container *ngIf="menu.name === 'ນຳສິນຄ້າອອກ'">
+          <span>{{menu.name}} <i class="pi pi-caret-up" style="color: rgb(160, 0, 0)"></i></span>
+        </ng-container>
+        <ng-container *ngIf="menu.name !== 'ຮັບສິນຄ້າເຂົ້າ' && menu.name !== 'ນຳສິນຄ້າອອກ'">
+          {{menu.name}}
+        </ng-container>
+
+      </div>
+    </a>
+  </div>
+</div>

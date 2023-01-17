@@ -1,0 +1,56 @@
+.dp {
+    height: 100%;
+    display: inline;
+    position: relative;
+}
+
+.dp-btn {
+    display: inline;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 2px;
+    background-color: rgb(149, 149, 149);
+}
+
+.dp-btn:hover {
+    background-color: rgb(133, 133, 133);
+    transition: 1s ease;
+}
+
+.dp-btn-delete:hover {
+    color: #e62626;
+    transition: 0.2s ease;
+}
+
+.dp-content {
+    overflow: hidden;
+    border-radius: 3px;
+    margin-top: 8px;
+    position: absolute;
+    background-color: white;
+    right: 0;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+    z-index: 500;
+    transition: 1s ease;
+}
+
+.dp-content>div {
+    padding: 0.5em;
+    display: flex;
+    cursor: pointer;
+}
+
+.dp-content>div:hover {
+    background-color: rgb(243, 243, 243);
+}
+
+.dp-content .text {
+    font-size: 1.1em;
+    min-width: 3em;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.dp-content .icon {
+    justify-content: end;
+}

@@ -1,0 +1,50 @@
+.role-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+}
+
+.p-inputtext.ng-dirty.ng-valid {
+    border-color: green;
+}
+
+.role-list {
+    padding: 5px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+}
+
+.role-btn {
+    background-color: transparent;
+    font-weight: bold;
+}
+
+.btn-gcode {
+    background-color: #689F38;
+    color: white;
+    transition: 200ms linear;
+    width: 100%;
+    height: 100%;
+}
+
+.btn-gcode:hover {
+    background-color: #578a2a;
+    color: white;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
